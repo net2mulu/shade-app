@@ -1,7 +1,22 @@
-import "./App.css";
+import { Routes, useLocation } from "react-router-dom";
+import routes from "./routes";
+import MainLayout from "./components/layout";
 
-function App() {
-  return <div className="App"></div>;
+export default function App() {
+  const { pathname } = useLocation();
+  const nonLayoutRoutes = ["/"];
+
+  return (
+    <>
+      {nonLayoutRoutes.includes(pathname) ? (
+        <div className="w-full h-max  font-poppins bg-white">
+          <Routes>{routes}</Routes>
+        </div>
+      ) : (
+        <MainLayout>
+          <Routes>{routes}</Routes>
+        </MainLayout>
+      )}
+    </>
+  );
 }
-
-export default App;
