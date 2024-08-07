@@ -6,7 +6,7 @@ const MainLayout = ({ children }) => {
   return (
     <div className="bg-[#F0F2FF] w-screen h-screen flex">
       <SideBar />
-      <div className="flex flex-col calc-width h-screen">
+      <div className="flex flex-col w-[82vw] 2xl:w-[84vw] h-screen">
         <NavBar />
         <div className="flex flex-col calc-height overflow-auto">
           {children}

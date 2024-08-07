@@ -9,7 +9,7 @@ const SideBar = () => {
   const { pathname } = useLocation();
 
   return (
-    <div className="bg-white shadow-lg w-[20vw] 2xl:w-[16vw] h-screen flex justify-between flex-col gap-2 p-4">
+    <div className="bg-white shadow-lg w-[18vw] 2xl:w-[16vw] h-screen flex justify-between flex-col gap-2 p-4">
       <div className="py-4 w-full flex items-center justify-between gap-2">
         <img src={Logo} alt="Logo" className="w-8" />
         <p className="text-black font-bold text-xl">Shade Management</p>

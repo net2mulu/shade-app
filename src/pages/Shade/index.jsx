@@ -9,12 +9,12 @@ const Shade = () => {
 
   return (
     <>
-      <div className="-mt-2 w-full flex flex-col">
+      <div className="my-2 px-4 w-full flex flex-col justify-between h-full ">
         <div className="w-full flex flex-col gap-2">
           <>
             <div className="md:flex-row flex flex-col justify-between space-y-4 md:space-y-0 w-full items-center">
               <div>
-                <p className="text-2xl font-semibold text-emdmsPrimary">
+                <p className="text-2xl font-semibold text-[#3170B5]">
                   Partnership Management
                 </p>
                 <p className="text-xs text-N70 max-w-md">
@@ -44,19 +44,19 @@ const Shade = () => {
               breakLabel="..."
               breakClassName="bg-white font-bold text-center border border-white rounded-md px-3 py-1"
               nextLabel="Next >"
-              nextClassName="border border-[#005656]  space-x-2 items-center  flex text-[#005656] px-4 py-1 ml-2"
+              nextClassName="border border-[#3170B5]  space-x-2 items-center  flex text-[#3170B5] px-4 py-1 ml-2"
               // onPageChange={handlePageClick}
               onPageChange={handlePageClick}
               pageRangeDisplayed={5}
               pageCount={Math.ceil(total / itemsPerPage)}
               previousLabel="< Previous"
-              previousClassName="border border-[#005656]  space-x-2 items-center  flex text-[#005656] px-4 py-1 mr-2"
+              previousClassName="border border-[#3170B5]  space-x-2 items-center  flex text-[#3170B5] px-4 py-1 mr-2"
               containerClassName=""
-              className="flex justify-center text-emdmsPrimary  items-end md:justify-end  mr-5 mb-4"
+              className="flex justify-center text-[#3170B5]  items-end md:justify-end  mr-5 mb-4"
               pageLinkClassName="px-3 py-2 "
-              pageClassName="bg-white py-1 rounded-md border border-[#005656] mx-1"
-              activeLinkClassName="text-white w-full rounded-md px-2 bg-emdmsPrimary"
-              activeClassName="bg-emdmsPrimary text-white"
+              pageClassName="bg-[#3170B5] py-1 rounded-md border border-[#005656] mx-1"
+              activeLinkClassName="text-white w-full rounded-md px-2 text-[#3170B5]"
+              activeClassName="text-[#3170B5] text-white"
             />
           }
         </div>
