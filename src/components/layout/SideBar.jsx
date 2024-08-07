@@ -31,7 +31,7 @@ const SideBar = () => {
           </Link>
 
           <Link
-            to="/"
+            to="/shade"
             className={`${
               pathname === "/shade"
                 ? "bg-[#3170B5]/10"
