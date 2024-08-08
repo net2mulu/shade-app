@@ -17,19 +17,19 @@ const NavBar = () => {
           alt="Company Logo"
           className="absolute top-0 h-full -translate-x-1/2 left-1/2"
         />
-        {user_data_loading ? (
+        {user_data_loading ? ( 
           <div className="mr-10 rounded-md max-w-xs w-full mx-auto">
             <div className="animate-pulse flex space-x-4">
               <div className="flex-1 space-y-6 py-1">
                 <div className="space-y-3">
-                  <div className="h-2 bg-gray-400 rounded"></div>
+                  <div className="h-2 bg-gray-200 rounded"></div>
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="h-2 bg-gray-400 rounded col-span-2 max-w-sm"></div>
-                    <div className="h-2 bg-gray-400 rounded col-span-1"></div>
+                    <div className="h-2 bg-gray-200 rounded col-span-2 max-w-sm"></div>
+                    <div className="h-2 bg-gray-200 rounded col-span-1"></div>
                   </div>
                 </div>
               </div>
-              <div className="rounded-full bg-gray-400 h-10 w-10"></div>
+              <div className="rounded-full bg-gray-200 h-10 w-10"></div>
             </div>
           </div>
         ) : (
