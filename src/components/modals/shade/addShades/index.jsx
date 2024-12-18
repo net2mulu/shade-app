@@ -20,7 +20,7 @@ const AddShade = ({ isOpenRegisterModal, setIsOpennRegisterModal }) => {
         <div className="flex min-h-full items-center justify-center p-4">
           <DialogPanel
             transition
-            className="overflow-auto w-[60%] max-h-[80vh] rounded-xl bg-white p-8  backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
+            className="overflow-auto w-[70%] max-h-[80vh] rounded-xl bg-white p-8  backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
           >
             <DialogTitle
               as="h2"
