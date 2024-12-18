@@ -25,3 +25,19 @@
   height: 100% !important;
   fill: #000;
 }
+
+::-webkit-scrollbar {
+  @apply w-[5px] h-[5px];
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-white w-[5px] overflow-hidden;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#d9d9d9] rounded-[4px];
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#d9d9d9];
+}

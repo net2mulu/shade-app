@@ -1,37 +1,58 @@
 import React from "react";
 
-const RegisteredShadeTypes = () => {
-  const data = [
-    { type: "PLC", percentage: 59 },
-    { type: "Union", percentage: 14 },
-    { type: "Private", percentage: 7 },
-    { type: "Stock", percentage: 10 },
-  ];
+function RegisteredShadeTypes() {
+  const data = {
+    totalEnterprises: 2651,
+    shadeTypes: [
+      { color: "#15D1A4", name: "PLC", percentage: "50%" },
+      { color: "#F8D8AB", name: "Union", percentage: "20%" },
+      { color: "#B7DFED", name: "Private", percentage: "20%" },
+      { color: "#DDCBFC", name: "Stock", percentage: "10%" },
+    ],
+  };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-      <h2 className="text-2xl font-bold mb-4">Registered Shade Types</h2>
-      {data.map((item, index) => (
-        <div key={index} className="flex justify-between items-center mb-2">
-          <div className="flex items-center">
+    <div className="w-full  mt-12">
+      <div className="flex items-center mx-2 mb-4">
+        <span className="text-[#1A1A1A] text-3xl font-bold mr-2">
+          {data.totalEnterprises}
+        </span>
+        <span className="text-gray-500">Enterprises</span>
+      </div>
+      <div className="w-full  justify-between flex items-center">
+        {data.shadeTypes.map((shadeType, i) => (
+          <div
+            key={i}
+            className={`flex flex-col gap-8  items-start justify-center`}
+            style={{
+              width: shadeType.percentage,
+              zIndex: data.shadeTypes.length - i,
+            }}
+          >
             <div
-              className={`w-4 h-4 rounded-full mr-2 ${
-                index === 0
-                  ? "bg-blue-500"
-                  : index === 1
-                  ? "bg-green-500"
-                  : index === 2
-                  ? "bg-yellow-500"
-                  : "bg-purple-500"
+              className={`w-[110%]  h-8 rounded-full bg-[${shadeType.color}] border-x-4 border-y-2 border-white `}
+            />
+            <div
+              className={`text-[#959595] flex flex-col ${
+                i !== 0 && "ml-[10%]"
               }`}
-            ></div>
-            <span className="text-gray-700">{item.type}</span>
+            >
+              <div className="flex items-center justify-start gap-4">
+                <div
+                  className={`w-2 h-2  bg-[${shadeType.color}] rounded-full`}
+                ></div>
+
+                <span className="text-lg font-bold">
+                  {shadeType.percentage}
+                </span>
+              </div>
+              <span className="ml-6 text-gray-500">{shadeType.name}</span>
+            </div>
           </div>
-          <span className="text-gray-700">{item.percentage}%</span>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
-};
+}
 
 export default RegisteredShadeTypes;

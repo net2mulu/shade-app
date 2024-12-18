@@ -4,6 +4,7 @@ import Logo from "../../assets/svg/logo.svg";
 import folder from "../../assets/svg/folder.svg";
 import { Link, useLocation } from "react-router-dom";
 import { BiSolidDashboard } from "react-icons/bi";
+import { MdAddHomeWork } from "react-icons/md";
 
 const SideBar = () => {
   const { pathname } = useLocation();
@@ -17,7 +18,7 @@ const SideBar = () => {
       <div className="h-4/5 flex flex-col justify-between items-center">
         <div className="w-full flex flex-col gap-2 items-center">
           <Link
-            to="/"
+            to="/dashboard"
             className={`${
               pathname === "/dashboard"
                 ? "bg-[#3170B5]/10"
@@ -38,23 +39,9 @@ const SideBar = () => {
                 : "hover:bg-N99/50 text-N60"
             } hover:bg-[#3170B5]/20 w-full flex gap-4 items-center justify-center px-2 py-2 cursor-pointer transition-all duration-300 ease-in-out rounded-lg text-[#3170B5]`}
           >
-            <BiSolidDashboard className="text-xl" />
+            <MdAddHomeWork className="text-xl" />
             <p className="font-medium text-sm whitespace-nowrap overflow-hidden w-3/5">
               Shades
-            </p>
-          </Link>
-
-          <Link
-            to="/"
-            className={`${
-              pathname === "/dashsboard"
-                ? "bg-[#3170B5]/10 "
-                : "hover:bg-N99/50 text-N60"
-            } hover:bg-[#3170B5]/20 w-full flex gap-4 items-center justify-center px-2 py-2 cursor-pointer transition-all duration-300 ease-in-out rounded-lg text-[#3170B5]`}
-          >
-            <BiSolidDashboard className="text-xl" />
-            <p className="font-medium text-sm whitespace-nowrap overflow-hidden w-3/5">
-              Dashboard
             </p>
           </Link>
         </div>

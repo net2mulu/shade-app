@@ -5,11 +5,12 @@ import ShadeTable from "../../components/Shade/ShadeTable";
 import { ShadeContext } from "../../context/ShadeContext";
 import {
   DialogBackdrop,
-  Button,
   Dialog,
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
+import { BsBuildings } from "react-icons/bs";
+import RegisterShade from "../../components/Shade/RegisterShade";
 
 const Shade = () => {
   const { itemsPerPage, total, handlePageClick } = useContext(ShadeContext);
@@ -32,23 +33,16 @@ const Shade = () => {
           <div className="flex min-h-full items-center justify-center p-4">
             <DialogPanel
               transition
-              className="w-150 rounded-xl bg-white p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
+              className="overflow-auto w-[60%] max-h-[80vh] rounded-xl bg-white p-8  backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
             >
-              <DialogTitle as="h3" className="text-base/7 font-medium">
-                Payment successful
+              <DialogTitle
+                as="h2"
+                className="flex items-center gap-2 justify-start text-2xl font-medium"
+              >
+                <BsBuildings className="text-[#3170B5] text-3xl  rounded-md font-bold" />
+                Register Shade
               </DialogTitle>
-              <p className="mt-2 text-sm/6">
-                Your payment has been successfully submitted. We’ve sent you an
-                email with all of the details of your order.
-              </p>
-              <div className="mt-4">
-                <Button
-                  className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Got it, thanks!
-                </Button>
-              </div>
+              <RegisterShade />
             </DialogPanel>
           </div>
         </div>
