@@ -127,4 +127,25 @@ const refreshToken = async () => {
   }
 };
 
+export const getTempClient = () => {
+  const httpLinkTemp = createHttpLink({
+    uri: process.env.REACT_APP_BACKEND_URL,
+  });
+
+  const authLinkTemp = setContext((operation, { headers }) => {
+    return {
+      headers: {
+        ...headers,
+        "x-hasura-admin-secret": "3LcJH8gT4sZkYVnfpqkDwY130m4S2G",
+      },
+    };
+  });
+
+  const clientNew = new ApolloClient({
+    link: ApolloLink.from([errorLink, authLinkTemp, httpLinkTemp]),
+    cache: new InMemoryCache({}),
+  });
+
+  return clientNew;
+};
 export default client;

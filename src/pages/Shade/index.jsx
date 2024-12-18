@@ -1,52 +1,39 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useMemo } from "react";
 import ReactPaginate from "react-paginate";
 import ShadeFilterTab from "../../components/Shade/ShadeFilterTab";
 import ShadeTable from "../../components/Shade/ShadeTable";
 import { ShadeContext } from "../../context/ShadeContext";
-import {
-  DialogBackdrop,
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
-import { BsBuildings } from "react-icons/bs";
-import RegisterShade from "../../components/Shade/RegisterShade";
+
+import AddShade from "../../components/modals/shade/addShades";
+import { useQuery } from "@apollo/client";
+import { GET_SHEDS } from "../../apollo/shades/query";
+import { getTempClient } from "../../apollo/client";
 
 const Shade = () => {
   const { itemsPerPage, total, handlePageClick } = useContext(ShadeContext);
-  let [isOpen, setIsOpen] = useState(true);
+  const [isOpenRegisterModal, setIsOpennRegisterModal] = useState(false);
 
-  useEffect(() => {
-    console.log(true);
-  }, [isOpen]);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const client = useMemo(() => getTempClient(), [])
+  const { loading, error, data } = useQuery(GET_SHEDS, {
+    variables: {
+      limit: pagination.pageSize,
+    },
+    client: client,
+  });
+
+
 
   return (
     <>
-      <Dialog
-        open={isOpen}
-        as="div"
-        className="relative z-50 focus:outline-none"
-        onClose={() => setIsOpen(false)}
-      >
-        <DialogBackdrop className=" fixed inset-0 bg-black/30" />
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
-            <DialogPanel
-              transition
-              className="overflow-auto w-[60%] max-h-[80vh] rounded-xl bg-white p-8  backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
-            >
-              <DialogTitle
-                as="h2"
-                className="flex items-center gap-2 justify-start text-2xl font-medium"
-              >
-                <BsBuildings className="text-[#3170B5] text-3xl  rounded-md font-bold" />
-                Register Shade
-              </DialogTitle>
-              <RegisterShade />
-            </DialogPanel>
-          </div>
-        </div>
-      </Dialog>
+      <AddShade
+        isOpenRegisterModal={isOpenRegisterModal}
+        setIsOpennRegisterModal={setIsOpennRegisterModal}
+      />
       <div className="my-2 p-4 px-6 w-full flex flex-col justify-between h-full ">
         <div className="w-full flex flex-col gap-2">
           <>
@@ -62,7 +49,7 @@ const Shade = () => {
               </div>
 
               <button
-                onClick={() => setIsOpen(true)}
+                onClick={() => setIsOpennRegisterModal(true)}
                 className="bg-[#3170B5] hover:bg-[#3170B5]/60 text-white px-4 py-2 rounded-md"
               >
                 Add New Shade
@@ -71,8 +58,11 @@ const Shade = () => {
 
             <ShadeFilterTab />
             <div className="w-full flex flex-col md:flex-row gap-4 justify-between md:items-center">
-              <div className="w-full gap-4 h-[60vh] overflow-y-auto  py-1 pb-3 relative rounded-lg">
-                <ShadeTable data={[]} />
+              <div className="w-full gap-4 h-[60vh]  py-1 pb-3 relative rounded-lg">
+                <ShadeTable
+                  isLoading={loading}
+                  shadsList={loading ? [] : data}
+                />
               </div>
             </div>
           </>
