@@ -148,4 +148,13 @@ export const getTempClient = () => {
 
   return clientNew;
 };
+
+export const resetClient = () => {
+  const clientNew = new ApolloClient({
+    link: ApolloLink.from([errorLink, authLink, httpLink]),
+    cache: new InMemoryCache({}),
+  });
+
+  return clientNew
+}
 export default client;

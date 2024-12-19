@@ -20,7 +20,7 @@ export const getColumns = () => {
     columnHelper.accessor("shed_type", {
       id: "shed_type",
       cell: (props) => (
-        <p className="clamp-1">{props.row.original.shed_type.name_json}</p>
+        <p className="clamp-1">{props.row.original.shed_type.name_json.en}</p>
       ),
       header: () => <span className="uppercase">Shade type</span>,
     }),
@@ -46,7 +46,7 @@ export const getColumns = () => {
     columnHelper.accessor("service_type", {
       id: "service_type",
       cell: (props) => (
-        <p className="clamp-1">{props.row.original.service_type.name_json}</p>
+        <p className="clamp-1">{props.row.original.service_type.name_json.en}</p>
       ),
       header: () => <span className="uppercase">Service type</span>,
     }),
