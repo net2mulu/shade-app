@@ -6,34 +6,67 @@ import { ShadeContext } from "../../context/ShadeContext";
 
 import AddShade from "../../components/modals/shade/addShades";
 import { useQuery } from "@apollo/client";
-import { GET_SHEDS } from "../../apollo/shades/query";
+import {
+  GET_ASSIGNED_SHEDS,
+  GET_SHEDS,
+  GET_UNASSIGNED_SHEDS,
+} from "../../apollo/shades/query";
 import { getTempClient } from "../../apollo/client";
+import TabButtons from "../../components/molecule/TabsButton";
+import AssignShadeModal from "../../components/modals/shade/addShades/assignShed";
+export const TabStatusOptions = ["all", "created", "assigned"];
+
+export const getQuery = (selectedTab) => {
+  switch (selectedTab) {
+    case TabStatusOptions[1]:
+      return GET_UNASSIGNED_SHEDS;
+
+    case TabStatusOptions[2]:
+      return GET_ASSIGNED_SHEDS;
+
+    default:
+      return GET_SHEDS;
+  }
+};
 
 const Shade = () => {
   const { itemsPerPage, total, handlePageClick } = useContext(ShadeContext);
+
   const [isOpenRegisterModal, setIsOpennRegisterModal] = useState(false);
+  const [isOpenAssignModal, setIsOpenAssignModal] = useState(false);
+  const [selectedShade, setSelectedShade] = useState(null)
+
+  const [tabStatus, setTabStatus] = useState(TabStatusOptions[0]);
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const client = useMemo(() => getTempClient(), [])
-  const { loading, error, data } = useQuery(GET_SHEDS, {
+  const client = useMemo(() => getTempClient(), []);
+  const { loading, data, refetch } = useQuery(getQuery(tabStatus), {
     variables: {
       limit: pagination.pageSize,
     },
     client: client,
   });
 
-
-
   return (
     <>
       <AddShade
         isOpenRegisterModal={isOpenRegisterModal}
         setIsOpennRegisterModal={setIsOpennRegisterModal}
+        refetch={refetch}
+        
       />
+      <AssignShadeModal
+        isOpen={isOpenAssignModal}
+        setIsOpen={setIsOpenAssignModal}
+        selectedShade={selectedShade}
+        setSelectedShade={setSelectedShade}
+        refetch={refetch}
+      />
+
       <div className="my-2 p-4 px-6 w-full flex flex-col justify-between h-full ">
         <div className="w-full flex flex-col gap-2">
           <>
@@ -57,11 +90,19 @@ const Shade = () => {
             </div>
 
             <ShadeFilterTab />
+            <TabButtons
+              options={TabStatusOptions}
+              status={tabStatus}
+              setStatus={setTabStatus}
+            />
             <div className="w-full flex flex-col md:flex-row gap-4 justify-between md:items-center">
               <div className="w-full gap-4 h-[60vh]  py-1 pb-3 relative rounded-lg">
                 <ShadeTable
                   isLoading={loading}
                   shadsList={loading ? [] : data}
+                  tabStatus={tabStatus}
+                  setIsOpenAssignModal={setIsOpenAssignModal}
+                  setSelectedShade={setSelectedShade}
                 />
               </div>
             </div>

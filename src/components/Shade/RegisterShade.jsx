@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Button } from "@headlessui/react";
 import React, { useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -20,6 +20,12 @@ import {
   GET_FLOORS,
 } from "../../apollo/base_data/query";
 import Loader from "../loader";
+import { boolOptions } from "../../utils/data";
+import { INSERT_SHED } from "../../apollo/shades/mutation";
+import toast from "react-hot-toast";
+import { transformObject } from "../../utils/methods/transferData";
+import { GET_SHEDS } from "../../apollo/shades/query";
+import { ClipLoader } from "react-spinners";
 
 function handleTheme(theme) {
   return {
@@ -36,7 +42,7 @@ function handleTheme(theme) {
   };
 }
 
-const RegisterShade = ({ setIsOpen }) => {
+const RegisterShade = ({ setIsOpen, refetch }) => {
   const {
     register,
     handleSubmit,
@@ -46,6 +52,26 @@ const RegisterShade = ({ setIsOpen }) => {
   } = useForm();
 
   const client = useMemo(() => resetClient(), []);
+  const updatedClient = useMemo(() => getTempClient(), []);
+
+  const [createShed, { loading: loadingSubmit }] = useMutation(INSERT_SHED, {
+    onCompleted: () => {
+      toast.success("Shed added successfully");
+      refetch()
+      setIsOpen(false);
+    },
+    onError: (err) => {
+      console.error(err);
+      toast.error("Failed to new shed. Please try again.");
+    },
+    refetchQueries: [
+      {
+        query: GET_SHEDS,
+        variables: { limit: 20 },
+      },
+    ],
+    client: updatedClient,
+  });
 
   const { loading: loadingKebele, data: dataKebele } = useQuery(GET_KEBELES, {
     variables: {
@@ -82,20 +108,20 @@ const RegisterShade = ({ setIsOpen }) => {
     GET_SERVICES_TYPES,
     {
       skip: false,
-      client: useMemo(() => getTempClient(), []),
+      client: updatedClient,
     }
   );
 
   const { loading: loadingShed, data: dataShed } = useQuery(GET_SHED_TYPES, {
     skip: false,
-    client: useMemo(() => getTempClient(), []),
+    client: updatedClient,
   });
 
   const { loading: loadingBuiltBy, data: dataBuiltBy } = useQuery(
     GET_BUILT_BY,
     {
       skip: false,
-      client: useMemo(() => getTempClient(), []),
+      client: updatedClient,
     }
   );
 
@@ -103,7 +129,7 @@ const RegisterShade = ({ setIsOpen }) => {
     GET_CONSTRUCTION_LEVELS,
     {
       skip: false,
-      client: useMemo(() => getTempClient(), []),
+      client: updatedClient,
     }
   );
 
@@ -111,7 +137,7 @@ const RegisterShade = ({ setIsOpen }) => {
     GET_CONSTRUCTION_TYPES,
     {
       skip: false,
-      client: useMemo(() => getTempClient(), []),
+      client: updatedClient,
     }
   );
 
@@ -119,7 +145,7 @@ const RegisterShade = ({ setIsOpen }) => {
     GET_CONSTRUCTION_NOT_TRANSFERRED_REASON,
     {
       skip: false,
-      client: useMemo(() => getTempClient(), []),
+      client: updatedClient,
     }
   );
 
@@ -127,13 +153,13 @@ const RegisterShade = ({ setIsOpen }) => {
     GET_CONSTRUCTION_STOPPED_REASON,
     {
       skip: false,
-      client: useMemo(() => getTempClient(), []),
+      client: updatedClient,
     }
   );
 
   const { loading: loadingFloorNo, data: dataFloorNo } = useQuery(GET_FLOORS, {
     skip: false,
-    client: useMemo(() => getTempClient(), []),
+    client: updatedClient,
   });
 
   if (
@@ -154,8 +180,44 @@ const RegisterShade = ({ setIsOpen }) => {
     return <Loader />;
   }
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    const parsedData = transformObject(data);
+
+    const leftFields = {};
+
+    if (!data?.shed_type_id) {
+      leftFields["shed_type_id"] = "47fc7455-aa4e-42ca-9079-774075f596f2";
+    }
+
+    if (!data?.number_of_floors_id) {
+      leftFields["number_of_floors_id"] =
+        "02e1cc4f-3a4f-423e-a02e-9d638400ad18";
+    }
+
+    if (!data?.construction_completed_date) {
+      leftFields["construction_completed_date"] = "2024-12-20";
+    }
+
+    if (!data?.construction_stopped_date) {
+      leftFields["construction_stopped_date"] = "2024-12-20";
+    }
+
+    if (!data?.created_by_id) {
+      leftFields["created_by_id"] = "00000000-0000-0000-0000-000000000000";
+    }
+
+    try {
+      await createShed({
+        variables: {
+          ...parsedData,
+          ...leftFields,
+          total_cost_of_production: data.total_cost_of_production.toString(),
+          name: {"en": data.name},
+        },
+      });
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
   };
 
   const selectedConstructionType = watch("construction_type_id");
@@ -309,7 +371,7 @@ const RegisterShade = ({ setIsOpen }) => {
               />
             )}
           />
-          {errors.city_id && (
+          {errors.zone_id && (
             <span className="text-red-500 text-xs capitalize">
               * {errors.zone_id.message}
             </span>
@@ -399,6 +461,248 @@ const RegisterShade = ({ setIsOpen }) => {
         </div>
       </div>
 
+      <h2 className="text-[#3170B5] text-xl font-bold">...</h2>
+      <div className="grid grid-cols-3 border-x-none border-t-none border-b border-[#CBCBCB]/50 pb-12 py-4  gap-8 w-full">
+        <div className="flex flex-col">
+          <label
+            htmlFor="production_area"
+            className="text-black text-base font-medium capitalize"
+          >
+            Area of production <span className="text-red-400">*</span>
+          </label>
+          <span className="text-[#CBCBCB] text-sm">
+            የማምረቻ/ የመሸጫ ቦታው ስፋት በካ.ሜ
+          </span>
+          <input
+            name="production_area"
+            type="text"
+            placeholder="eg. 5 * 5"
+            id="production_area"
+            className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
+            {...register("production_area", {
+              required: "Area is required",
+            })}
+          />
+          {errors.production_area && (
+            <span className="text-red-500 text-xs capitalize">
+              * {errors.production_area.message}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          <label
+            htmlFor="manufacturing_place"
+            className="text-black text-base font-medium capitalize"
+          >
+            Manufacturing Place <span className="text-red-400">*</span>
+          </label>
+          <span className="text-[#CBCBCB] text-sm">
+            ማምረቻ/ መሸጫው የተገነባበት ቦታ የሚገኝበት
+          </span>
+          <input
+            name="manufacturing_place"
+            type="text"
+            placeholder="address"
+            id="manufacturing_place"
+            className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
+            {...register("manufacturing_place", {
+              required: "Manufacturing place is required",
+            })}
+          />
+          {errors.manufacturing_place && (
+            <span className="text-red-500 text-xs capitalize">
+              * {errors.manufacturing_place.message}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          <label
+            htmlFor="number_of_enterprises"
+            className="text-black text-base font-medium capitalize"
+          >
+            Number of enterprises<span className="text-red-400">*</span>
+          </label>
+          <span className="text-[#CBCBCB] text-sm">
+            ቦታው ሊያስተናግድ የሚችለው የኢንተርፕራይዞች ብዛት
+          </span>
+          <input
+            name="number_of_enterprises"
+            type="number"
+            placeholder="address"
+            id="number_of_enterprises"
+            className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
+            {...register("number_of_enterprises", {
+              required: "No. of enterprises is required",
+            })}
+          />
+          {errors.number_of_enterprises && (
+            <span className="text-red-500 text-xs capitalize">
+              * {errors.number_of_enterprises.message}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          <label
+            htmlFor="have_water"
+            className="text-black text-base font-medium capitalize"
+          >
+            Does it have water? <span className="text-red-400">*</span>
+          </label>
+          <span className="text-[#CBCBCB] text-sm">ዉሃ አለው ?</span>
+          <Controller
+            name="have_water"
+            control={control}
+            rules={{ required: "Required" }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={boolOptions}
+                placeholder="Select option"
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    borderColor: errors.have_water
+                      ? "red"
+                      : state.isFocused
+                      ? "#3170B5"
+                      : "#CED4DB",
+                    padding: ".5px",
+                    marginTop: ".5rem",
+                  }),
+                }}
+              />
+            )}
+          />
+          {errors.have_water && (
+            <span className="text-red-500 text-xs capitalize">
+              * {errors.have_water.message}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          <label
+            htmlFor="have_electricity"
+            className="text-black text-base font-medium capitalize"
+          >
+            Does it have electricity?<span className="text-red-400">*</span>
+          </label>
+          <span className="text-[#CBCBCB] text-sm">ኤሌክትርሲቲ አለው?</span>
+          <Controller
+            name="have_electricity"
+            control={control}
+            rules={{ required: "Required" }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={boolOptions}
+                placeholder="Select option"
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    borderColor: errors.have_electricity
+                      ? "red"
+                      : state.isFocused
+                      ? "#3170B5"
+                      : "#CED4DB",
+                    padding: ".5px",
+                    marginTop: ".5rem",
+                  }),
+                }}
+              />
+            )}
+          />
+          {errors.have_electricity && (
+            <span className="text-red-500 text-xs capitalize">
+              * {errors.have_electricity.message}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          <label
+            htmlFor="have_toilet"
+            className="text-black text-base font-medium capitalize"
+          >
+            Does it have a toilet? <span className="text-red-400">*</span>
+          </label>
+          <span className="text-[#CBCBCB] text-sm">መፀዳጃ ቤት አለው?</span>
+          <Controller
+            name="have_toilet"
+            control={control}
+            rules={{ required: "Required" }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={boolOptions}
+                placeholder="Select option"
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    borderColor: errors.have_toilet
+                      ? "red"
+                      : state.isFocused
+                      ? "#3170B5"
+                      : "#CED4DB",
+                    padding: ".5px",
+                    marginTop: ".5rem",
+                  }),
+                }}
+              />
+            )}
+          />
+          {errors.have_toilet && (
+            <span className="text-red-500 text-xs capitalize">
+              * {errors.have_toilet.message}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          <label
+            htmlFor="is_suitable_for_disabled_people"
+            className="text-black text-base font-medium capitalize"
+          >
+            Is it suitable for disabled people?{" "}
+            <span className="text-red-400">*</span>
+          </label>
+          <span className="text-[#CBCBCB] text-sm">
+            የማምረቻ/ የመሸጫ ቦታው ለአካል ጉዳተኞች አመቺ ነው ?
+          </span>
+          <Controller
+            name="is_suitable_for_disabled_people"
+            control={control}
+            rules={{ required: "Required" }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={boolOptions}
+                placeholder="Select option"
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    borderColor: errors.is_suitable_for_disabled_people
+                      ? "red"
+                      : state.isFocused
+                      ? "#3170B5"
+                      : "#CED4DB",
+                    padding: ".5px",
+                    marginTop: ".5rem",
+                  }),
+                }}
+              />
+            )}
+          />
+          {errors.is_suitable_for_disabled_people && (
+            <span className="text-red-500 text-xs capitalize">
+              * {errors.is_suitable_for_disabled_people.message}
+            </span>
+          )}
+        </div>
+      </div>
       <h2 className="text-[#3170B5] text-xl font-bold">...</h2>
 
       <div className="grid grid-cols-3 border-x-none border-t-none border-b border-[#CBCBCB]/50 pb-12 py-4  gap-8 w-full">
@@ -887,7 +1191,9 @@ const RegisterShade = ({ setIsOpen }) => {
               control={control}
               rules={{
                 required:
-                selectedConstructionLevel?.label.toLowerCase() === "finished" === "shed"
+                  (selectedConstructionLevel?.label.toLowerCase() ===
+                    "finished") ===
+                  "shed"
                     ? "Reason is required"
                     : false,
               }}
@@ -964,7 +1270,20 @@ const RegisterShade = ({ setIsOpen }) => {
           type="submit"
           className="inline-flex items-center gap-2 w-32 justify-center rounded-md bg-[#3170B5] py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
         >
-          Register
+        {loadingSubmit ? (
+            <ClipLoader
+              color={"white"}
+              loading={true}
+              size={16}
+              aria-label="Loading Spinner"
+              data-testid="loader"
+              className="py-2"
+
+            />
+          ) : (
+            "Register"
+          )}
+          
         </Button>
       </div>
     </form>

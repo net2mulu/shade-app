@@ -5,17 +5,17 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import React, { useState } from "react";
-import { getColumns } from "../modals/shade/addShades/cols";
 import TableLoader from "../loader/tableLoader";
 import EmptyTable from "./EmptyTable";
+import { getColumns } from "../../utils/cols/tableCols";
 
-const ShadeTable = ({ isLoading, shadsList }) => {
+const ShadeTable = ({ isLoading, shadsList, tabStatus, setIsOpenAssignModal, setSelectedShade }) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const columns = getColumns();
+  const columns = getColumns(tabStatus, setIsOpenAssignModal, setSelectedShade);
   const table = useReactTable({
     data: shadsList?.enterprise_sheds ?? [],
     columns,

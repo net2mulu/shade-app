@@ -106,3 +106,33 @@ export const INSERT_SHED = gql`
     }
   }
 `;
+
+export const ASSIGN_SHED = gql`
+  mutation InsertAssignedSheds(
+    $enterprise_id: uuid
+    $shed_id: uuid
+    $assigned_by_id: uuid
+  ) {
+    insert_enterprise_assigned_sheds(
+      objects: {
+        enterprise_id: $enterprise_id
+        shed_id: $shed_id
+        assigned_by_id: $assigned_by_id
+      }
+    ) {
+      affected_rows
+      returning {
+        id
+        created_at
+        updated_at
+        created_by_id
+        updated_by_id
+        enterprise_id
+        shed_id
+        status
+        assigned_at
+        assigned_by_id
+      }
+    }
+  }
+`;
