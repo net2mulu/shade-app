@@ -21,7 +21,7 @@ function returnTokenDependingOnOperation(operation) {
 }
 
 const httpLink = createHttpLink({
-  uri: process.env.REACT_APP_GATEWAY_URL,
+  uri: process.env.REACT_APP_BACKEND_URL,
 });
 
 const authLink = setContext((operation, { headers }) => {
@@ -48,6 +48,8 @@ const authLink = setContext((operation, { headers }) => {
     return {
       headers: {
         ...headers,
+        "x-hasura-role": "anonymous",
+        "x-real-ip": "123"
       },
     };
   }

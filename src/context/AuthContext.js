@@ -43,29 +43,13 @@ export const AuthProvider = ({ children }) => {
           signInResponse?.tokens?.access_token
         );
         localStorage.setItem("user_id", signInResponse?.data?.id);
+        if (searchParams) {
+          navigate(searchParams);
+        } else {
+          navigate("/dashboard");
+        }
 
-        getUser({
-          variables: {
-            where: {
-              registration_id: {
-                _eq: signInResponse?.data?.id,
-              },
-            },
-          },
-          onCompleted(data) {
-            if (searchParams) {
-              navigate(searchParams);
-            } else {
-              navigate("/dashboard");
-            }
-          },
-          onError(err) {
-            console.log(err);
-            logOut();
-            toast.error("You are not authorized to access this page");
-            toast.error(err.message);
-          },
-        });
+     
       },
       onError(err) {
         console.log(err);

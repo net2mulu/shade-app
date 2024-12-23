@@ -11,7 +11,9 @@ const TabButtons = ({ options, status, setStatus }) => {
               ? "bg-primary text-white font-semibold"
               : "bg-white text-[#9898A3] border"
           }`}
-          onClick={() => setStatus(option)}
+          onClick={() => {
+            setStatus(option);
+          }}
         >
           {option}
         </button>

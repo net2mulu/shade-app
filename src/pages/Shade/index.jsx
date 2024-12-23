@@ -2,7 +2,6 @@ import React, { useState, useMemo } from "react";
 import ShadeFilterTab from "../../components/Shade/ShadeFilterTab";
 import ShadeTable from "../../components/Shade/ShadeTable";
 
-import AddShade from "../../components/modals/shade/addShades";
 import { useQuery } from "@apollo/client";
 import {
   GET_ASSIGNED_SHEDS,
@@ -11,8 +10,10 @@ import {
 } from "../../apollo/shades/query";
 import { getTempClient } from "../../apollo/client";
 import TabButtons from "../../components/molecule/TabsButton";
-import AssignShadeModal from "../../components/modals/shade/addShades/assignShed";
 import Pagination from "../../components/molecule/Pagination";
+import ModalContainer from "../../components/modals/ModalContainer";
+import RegisterShade from "../../components/Shade/RegisterShade";
+import AssignShade from "../../components/Shade/AssignShade";
 export const TabStatusOptions = ["all", "created", "assigned"];
 
 export const getQuery = (selectedTab) => {
@@ -52,18 +53,27 @@ const Shade = () => {
 
   return (
     <>
-      <AddShade
-        isOpenRegisterModal={isOpenRegisterModal}
-        setIsOpennRegisterModal={setIsOpennRegisterModal}
+      <ModalContainer
+        isOpen={isOpenRegisterModal}
+        setIsOpen={setIsOpennRegisterModal}
         refetch={refetch}
-      />
-      <AssignShadeModal
+        title="Register Shade"
+      >
+        <RegisterShade setIsOpen={setIsOpennRegisterModal} refetch={refetch} />
+      </ModalContainer>
+
+      <ModalContainer
         isOpen={isOpenAssignModal}
         setIsOpen={setIsOpenAssignModal}
-        selectedShade={selectedShade}
-        setSelectedShade={setSelectedShade}
         refetch={refetch}
-      />
+        title="Assign Shades for Enterprises"
+      >
+        <AssignShade
+          selectedShade={selectedShade}
+          setIsOpen={setIsOpenAssignModal}
+          refetch={refetch}
+        />
+      </ModalContainer>
 
       <div className="my-2 p-4 px-6 w-full flex flex-col justify-between h-full">
         <div className="w-full flex flex-col gap-2">
@@ -74,7 +84,7 @@ const Shade = () => {
                   List of Shades
                 </p>
                 <p className="text-xs text-[#9898A3] max-w-md">
-                  Here is the list of all the shades created without filters of
+                  Here is the list of all the shades created with filters of
                   assigned and expired shades.
                 </p>
               </div>

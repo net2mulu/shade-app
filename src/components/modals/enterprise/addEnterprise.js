@@ -8,7 +8,7 @@ import {
 import { BsBuildings } from "react-icons/bs";
 import RegisterShade from "../../../../components/Shade/RegisterShade";
 import { IoClose } from "react-icons/io5";
-const AddShade = ({
+const AddEnterprise = ({
   isOpenRegisterModal,
   setIsOpennRegisterModal,
   refetch,
@@ -56,4 +56,4 @@ const AddShade = ({
   );
 };
 
-export default AddShade;
+export default AddEnterprise;

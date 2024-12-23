@@ -136,3 +136,61 @@ export const ASSIGN_SHED = gql`
     }
   }
 `;
+
+export const ADD_ENTERPRISE = gql`
+  mutation InsertEnterprises(
+    $used_for_intended_purpose: Boolean
+    $contract_expiration_time: date
+    $contract_transferred_time: date
+    $internally_displaced_female: String
+    $internally_displaced_male: String
+    $people_with_disabilities_female: String
+    $people_with_disabilities_male: String
+    $reason_not_used_for_intended_purpose: String
+    $returning_citizens_female: String
+    $returning_citizens_male: String
+    $young_female: String
+    $young_male: String
+    $organization_id: uuid
+  ) {
+    insert_enterprise_enterprises(
+      objects: {
+        used_for_intended_purpose: $used_for_intended_purpose
+        contract_expiration_time: $contract_expiration_time
+        contract_transferred_time: $contract_transferred_time
+        internally_displaced_female: $internally_displaced_female
+        internally_displaced_male: $internally_displaced_male
+        people_with_disabilities_female: $people_with_disabilities_female
+        people_with_disabilities_male: $people_with_disabilities_male
+        reason_not_used_for_intended_purpose: $reason_not_used_for_intended_purpose
+        returning_citizens_female: $returning_citizens_female
+        returning_citizens_male: $returning_citizens_male
+        young_female: $young_female
+        young_male: $young_male
+        organization_id: $organization_id
+      }
+    ) {
+      affected_rows
+      returning {
+        used_for_intended_purpose
+        contract_expiration_time
+        contract_transferred_time
+        internally_displaced_female
+        internally_displaced_male
+        people_with_disabilities_female
+        people_with_disabilities_male
+        reason_not_used_for_intended_purpose
+        returning_citizens_female
+        returning_citizens_male
+        young_female
+        young_male
+        created_at
+        updated_at
+        created_by_id
+        id
+        organization_id
+        updated_by_id
+      }
+    }
+  }
+`;

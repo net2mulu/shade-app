@@ -1,10 +1,21 @@
-export const boolOptions = [{
+export const boolOptions = [
+  {
     label: "Yes",
-    value: true
+    value: true,
   },
   {
     label: "No",
-    value: false
+    value: false,
   },
-  
-  ]
+];
+
+export const boolOptionsString = [
+  {
+    label: "Yes",
+    value: "Yes",
+  },
+  {
+    label: "No",
+    value: "No",
+  },
+];

@@ -1,8 +1,12 @@
 import { gql } from "@apollo/client";
 
 export const GET_SHEDS = gql`
-  query MyQuery($offset: Int, $limit: Int ) {
-    enterprise_sheds(order_by: { created_at: desc }, offset: $offset, limit: $limit) {
+  query MyQuery($offset: Int, $limit: Int) {
+    enterprise_sheds(
+      order_by: { created_at: desc }
+      offset: $offset
+      limit: $limit
+    ) {
       assigned_sheds {
         id
         created_at
@@ -64,9 +68,11 @@ export const GET_SHEDS = gql`
 `;
 
 export const GET_ASSIGNED_SHEDS = gql`
-  query MyQuery {
+  query MyQuery($offset: Int, $limit: Int) {
     enterprise_sheds(
       order_by: { created_at: desc }
+      offset: $offset
+      limit: $limit
       where: { assigned_sheds_aggregate: { count: { predicate: { _gt: 0 } } } }
     ) {
       assigned_sheds {
@@ -121,13 +127,20 @@ export const GET_ASSIGNED_SHEDS = gql`
       complete_infrastructure
       block_no
     }
+    enterprise_sheds_aggregate {
+      aggregate {
+        count
+      }
+    }
   }
 `;
 
 export const GET_UNASSIGNED_SHEDS = gql`
-  query MyQuery {
+  query MyQuery($offset: Int, $limit: Int) {
     enterprise_sheds(
       order_by: { created_at: desc }
+      offset: $offset
+      limit: $limit
       where: { assigned_sheds_aggregate: { count: { predicate: { _eq: 0 } } } }
     ) {
       assigned_sheds {
@@ -182,14 +195,53 @@ export const GET_UNASSIGNED_SHEDS = gql`
       complete_infrastructure
       block_no
     }
+    enterprise_sheds_aggregate {
+      aggregate {
+        count
+      }
+    }
   }
 `;
 
 export const GET_ENTERPRISES = gql`
-  query GetEnterprises {
-    enterprise_enterprises(order_by: { created_at: desc }) {
+  query GetEnterprises($offset: Int, $limit: Int) {
+    enterprise_enterprises(
+      order_by: { created_at: desc }
+      offset: $offset
+      limit: $limit
+    ) {
       id
+      created_at
       enterprise {
+        namejson
+        employees_aggregate {
+          aggregate {
+            count
+          }
+        }
+        addresses {
+          sub_city
+        }
+      }
+      assigned_sheds_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+    enterprise_enterprises_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
+export const GET_ORGANIZATIONS = gql`
+  query GetEnterprises {
+    organization_namespace {
+      organizations {
+        id
         namejson
       }
     }

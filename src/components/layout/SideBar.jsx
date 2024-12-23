@@ -5,7 +5,7 @@ import folder from "../../assets/svg/folder.svg";
 import { Link, useLocation } from "react-router-dom";
 import { BiSolidDashboard } from "react-icons/bi";
 import { MdAddHomeWork } from "react-icons/md";
-
+import { FaLayerGroup } from "react-icons/fa";
 const SideBar = () => {
   const { pathname } = useLocation();
 
@@ -44,7 +44,22 @@ const SideBar = () => {
               Shades
             </p>
           </Link>
+          <Link
+            to="/enterprise"
+            className={`${
+              pathname === "/enterprise"
+                ? "bg-[#3170B5]/10"
+                : "hover:bg-N99/50 text-N60"
+            } hover:bg-[#3170B5]/20 w-full flex gap-4 items-center justify-center px-2 py-2 cursor-pointer transition-all duration-300 ease-in-out rounded-lg text-[#3170B5]`}
+          >
+          <FaLayerGroup className="text-xl"  />
+            <p className="font-medium text-sm whitespace-nowrap overflow-hidden w-3/5">
+              Enterprise
+            </p>
+          </Link>
         </div>
+
+      
 
         <div className="w-full text-center p-2 rounded-2xl bg-[#E6E6E6]/30 flex justify-center items-center flex-col gap-2">
           <img src={folder} className="w-16 -mt-10" alt="" />

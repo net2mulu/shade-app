@@ -40,7 +40,7 @@ const Pagination = ({loading, pagination, setPagination, totalPages, refetch}) =
           onChange={handleRowsPerPageChange}
           className="border border-gray-300 rounded-md px-2 py-1 text-sm"
         >
-          {[5, 10, 20, 50].map((option) => (
+          {[1,5, 10, 20, 50].map((option) => (
             <option key={option} value={option}>
               {option}
             </option>
@@ -50,7 +50,7 @@ const Pagination = ({loading, pagination, setPagination, totalPages, refetch}) =
         <ReactPaginate
           renderOnZeroPageCount={false}
           breakLabel="..."
-          breakClassName="bg-white font-bold text-center border border-white rounded-md px-3 py-1"
+          breakClassName="bg-inherit font-bold text-center border border-white rounded-md px-3 py-1"
           nextLabel=">"
           nextClassName="space-x-2 items-center flex text-[#3170B5] px-4 py-1 ml-2"
           onPageChange={handlePageClick}
