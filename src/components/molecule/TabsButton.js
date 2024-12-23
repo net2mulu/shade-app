@@ -2,7 +2,7 @@ import React from "react";
 
 const TabButtons = ({ options, status, setStatus }) => {
   return (
-    <section className={`flex gap-4 my-4 text-sm font-medium w-1/2 `}>
+    <section className={`flex gap-4 my-2 text-sm font-medium w-1/2 `}>
       {options.map((option) => (
         <button
           type="button"

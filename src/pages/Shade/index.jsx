@@ -1,8 +1,6 @@
-import React, { useState, useContext, useMemo } from "react";
-import ReactPaginate from "react-paginate";
+import React, { useState, useMemo } from "react";
 import ShadeFilterTab from "../../components/Shade/ShadeFilterTab";
 import ShadeTable from "../../components/Shade/ShadeTable";
-import { ShadeContext } from "../../context/ShadeContext";
 
 import AddShade from "../../components/modals/shade/addShades";
 import { useQuery } from "@apollo/client";
@@ -14,6 +12,7 @@ import {
 import { getTempClient } from "../../apollo/client";
 import TabButtons from "../../components/molecule/TabsButton";
 import AssignShadeModal from "../../components/modals/shade/addShades/assignShed";
+import Pagination from "../../components/molecule/Pagination";
 export const TabStatusOptions = ["all", "created", "assigned"];
 
 export const getQuery = (selectedTab) => {
@@ -30,23 +29,23 @@ export const getQuery = (selectedTab) => {
 };
 
 const Shade = () => {
-  const { itemsPerPage, total, handlePageClick } = useContext(ShadeContext);
-
   const [isOpenRegisterModal, setIsOpennRegisterModal] = useState(false);
   const [isOpenAssignModal, setIsOpenAssignModal] = useState(false);
-  const [selectedShade, setSelectedShade] = useState(null)
+  const [selectedShade, setSelectedShade] = useState(null);
 
   const [tabStatus, setTabStatus] = useState(TabStatusOptions[0]);
 
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
+    perPage: 10,
+    currentPage: 0,
+    offset: 0,
   });
 
   const client = useMemo(() => getTempClient(), []);
   const { loading, data, refetch } = useQuery(getQuery(tabStatus), {
     variables: {
-      limit: pagination.pageSize,
+      limit: pagination.perPage,
+      offset: pagination.offset,
     },
     client: client,
   });
@@ -57,7 +56,6 @@ const Shade = () => {
         isOpenRegisterModal={isOpenRegisterModal}
         setIsOpennRegisterModal={setIsOpennRegisterModal}
         refetch={refetch}
-        
       />
       <AssignShadeModal
         isOpen={isOpenAssignModal}
@@ -67,7 +65,7 @@ const Shade = () => {
         refetch={refetch}
       />
 
-      <div className="my-2 p-4 px-6 w-full flex flex-col justify-between h-full ">
+      <div className="my-2 p-4 px-6 w-full flex flex-col justify-between h-full">
         <div className="w-full flex flex-col gap-2">
           <>
             <div className="md:flex-row flex flex-col justify-between space-y-4 md:space-y-0 w-full items-center">
@@ -96,7 +94,7 @@ const Shade = () => {
               setStatus={setTabStatus}
             />
             <div className="w-full flex flex-col md:flex-row gap-4 justify-between md:items-center">
-              <div className="w-full gap-4 h-[60vh]  py-1 pb-3 relative rounded-lg">
+              <div className="w-full gap-4 h-[62vh] overflow-y-scroll py-1 pb-3 relative rounded-lg">
                 <ShadeTable
                   isLoading={loading}
                   shadsList={loading ? [] : data}
@@ -108,30 +106,16 @@ const Shade = () => {
             </div>
           </>
         </div>
-        <div className="flex justify-center items-end md:justify-end">
-          {
-            <ReactPaginate
-              renderOnZeroPageCount={false}
-              breakLabel="..."
-              breakClassName="bg-white font-bold text-center border border-white rounded-md px-3 py-1"
-              nextLabel="Next >"
-              nextClassName="border border-[#3170B5]  space-x-2 items-center  flex text-[#3170B5] px-4 py-1 ml-2"
-              // onPageChange={handlePageClick}
-              onPageChange={handlePageClick}
-              pageRangeDisplayed={5}
-              pageCount={Math.ceil(total / itemsPerPage)}
-              previousLabel="< Previous"
-              previousClassName="border border-[#3170B5]  space-x-2 items-center  flex text-[#3170B5] px-4 py-1 mr-2"
-              containerClassName=""
-              className="flex justify-center text-[#3170B5]  items-end md:justify-end  mr-5 mb-4"
-              pageLinkClassName="px-3 py-2 "
-              pageClassName="bg-[#3170B5] py-1 rounded-md border border-[#005656] mx-1"
-              activeLinkClassName="text-white w-full rounded-md px-2 text-[#3170B5]"
-              activeClassName="text-[#3170B5] text-white"
-            />
-          }
-        </div>
       </div>
+      <Pagination
+        loading={loading}
+        pagination={pagination}
+        setPagination={setPagination}
+        totalPages={
+          loading ? 0 : data?.enterprise_sheds_aggregate?.aggregate?.count
+        }
+        refetch={refetch}
+      />
     </>
   );
 };

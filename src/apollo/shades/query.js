@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_SHEDS = gql`
-  query MyQuery {
-    enterprise_sheds(order_by: { created_at: desc }) {
+  query MyQuery($offset: Int, $limit: Int ) {
+    enterprise_sheds(order_by: { created_at: desc }, offset: $offset, limit: $limit) {
       assigned_sheds {
         id
         created_at
@@ -54,6 +54,11 @@ export const GET_SHEDS = gql`
       construction_completed_date
       complete_infrastructure
       block_no
+    }
+    enterprise_sheds_aggregate {
+      aggregate {
+        count
+      }
     }
   }
 `;

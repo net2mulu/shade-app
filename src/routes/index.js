@@ -3,7 +3,6 @@ import { ProtectedRoute } from "./protectedRoute";
 import Auth from "../pages/Auth";
 import Dashboard from "../pages/Dashboard";
 import Shade from "../pages/Shade";
-import { ShadeProvider } from "../context/ShadeContext";
 
 const routes = (
   <>
@@ -22,9 +21,7 @@ const routes = (
       element={
         <>
           <ProtectedRoute />
-          <ShadeProvider>
-            <Shade />
-          </ShadeProvider>
+          <Shade />
         </>
       }
     />

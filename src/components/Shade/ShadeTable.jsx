@@ -32,7 +32,7 @@ const ShadeTable = ({ isLoading, shadsList, tabStatus, setIsOpenAssignModal, set
 
   return (
     <article className="overflow-x-auto">
-      <table className="w-full border-0 bg-white pb-10 min-w-max">
+      <table className="w-full border-0 bg-white pb-10 min-w-max overflow-hidden">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="bg-[#F8FAFC]">
