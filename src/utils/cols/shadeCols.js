@@ -22,12 +22,12 @@ export const getColumns = (
       ),
       header: () => <span className="uppercase">Shade name</span>,
     }),
-    columnHelper.accessor("shed_type", {
-      id: "shed_type",
+    columnHelper.accessor("block_no", {
+      id: "block_no",
       cell: (props) => (
-        <p className="clamp-1">{props.row.original.shed_type.name_json.en}</p>
+        <p className="clamp-1">{props.row.original.block_no}</p>
       ),
-      header: () => <span className="uppercase">Shade type</span>,
+      header: () => <span className="uppercase">Block No.</span>,
     }),
     columnHelper.accessor("assigned_sheds", {
       id: "assigned_sheds",

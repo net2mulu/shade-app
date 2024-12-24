@@ -14,18 +14,60 @@ import Pagination from "../../components/molecule/Pagination";
 import ModalContainer from "../../components/modals/ModalContainer";
 import RegisterShade from "../../components/Shade/RegisterShade";
 import AssignShade from "../../components/Shade/AssignShade";
+import SearchInput from "../../components/molecule/TableSearch";
 export const TabStatusOptions = ["all", "created", "assigned"];
 
-export const getQuery = (selectedTab) => {
+export const getQuery = (selectedTab, searchText) => {
   switch (selectedTab) {
     case TabStatusOptions[1]:
-      return GET_UNASSIGNED_SHEDS;
+      return {
+        query: GET_UNASSIGNED_SHEDS,
+        where: searchText
+          ? {
+              _and: [
+                {
+                  assigned_sheds_aggregate: {
+                    count: { predicate: { _eq: 0 } },
+                  },
+                },
+                { block_no: { _ilike: "%" + searchText + "%" } },
+              ],
+            }
+          : {
+              assigned_sheds_aggregate: {
+                count: { predicate: { _eq: 0 } },
+              },
+            },
+      };
 
     case TabStatusOptions[2]:
-      return GET_ASSIGNED_SHEDS;
+      return {
+        query: GET_ASSIGNED_SHEDS,
+        where: searchText
+          ? {
+              _and: [
+                {
+                  assigned_sheds_aggregate: {
+                    count: { predicate: { _gt: 0 } },
+                  },
+                },
+                { block_no: { _ilike: "%" + searchText + "%" } },
+              ],
+            }
+          : {
+              assigned_sheds_aggregate: {
+                count: { predicate: { _gt: 0 } },
+              },
+            },
+      };
 
     default:
-      return GET_SHEDS;
+      return {
+        query: GET_SHEDS,
+        where: searchText
+          ? { block_no: { _ilike: "%" + searchText + "%" } }
+          : {},
+      };
   }
 };
 
@@ -33,7 +75,7 @@ const Shade = () => {
   const [isOpenRegisterModal, setIsOpennRegisterModal] = useState(false);
   const [isOpenAssignModal, setIsOpenAssignModal] = useState(false);
   const [selectedShade, setSelectedShade] = useState(null);
-
+  const [searchText, setSearchText] = useState(null);
   const [tabStatus, setTabStatus] = useState(TabStatusOptions[0]);
 
   const [pagination, setPagination] = useState({
@@ -43,13 +85,17 @@ const Shade = () => {
   });
 
   const client = useMemo(() => getTempClient(), []);
-  const { loading, data, refetch } = useQuery(getQuery(tabStatus), {
-    variables: {
-      limit: pagination.perPage,
-      offset: pagination.offset,
-    },
-    client: client,
-  });
+  const { loading, data, refetch } = useQuery(
+    getQuery(tabStatus, searchText).query,
+    {
+      variables: {
+        limit: pagination.perPage,
+        offset: pagination.offset,
+        where: getQuery(tabStatus, searchText).where,
+      },
+      client: client,
+    }
+  );
 
   return (
     <>
@@ -103,8 +149,16 @@ const Shade = () => {
               status={tabStatus}
               setStatus={setTabStatus}
             />
-            <div className="w-full flex flex-col md:flex-row gap-4 justify-between md:items-center">
-              <div className="w-full gap-4 h-[62vh] overflow-y-scroll py-1 pb-3 relative rounded-lg">
+            <article className="w-full flex flex-col md:flex-row gap-4 justify-between md:items-center">
+              <section className="bg-white w-full gap-4 h-[62vh] py-2 overflow-y-scroll pb-3 relative rounded-lg">
+                <div className="flex justify-end items-center">
+                  <SearchInput
+                    searchQuery={searchText}
+                    setSearchQuery={setSearchText}
+                    placeholder="Search by block no"
+                  />
+                </div>
+
                 <ShadeTable
                   isLoading={loading}
                   shadsList={loading ? [] : data}
@@ -112,8 +166,8 @@ const Shade = () => {
                   setIsOpenAssignModal={setIsOpenAssignModal}
                   setSelectedShade={setSelectedShade}
                 />
-              </div>
-            </div>
+              </section>
+            </article>
           </>
         </div>
       </div>

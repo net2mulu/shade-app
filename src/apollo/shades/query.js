@@ -1,11 +1,12 @@
 import { gql } from "@apollo/client";
 
 export const GET_SHEDS = gql`
-  query MyQuery($offset: Int, $limit: Int) {
+  query MyQuery($offset: Int, $limit: Int, $where: enterprise_sheds_bool_exp) {
     enterprise_sheds(
       order_by: { created_at: desc }
       offset: $offset
       limit: $limit
+      where: $where
     ) {
       assigned_sheds {
         id
@@ -68,12 +69,12 @@ export const GET_SHEDS = gql`
 `;
 
 export const GET_ASSIGNED_SHEDS = gql`
-  query MyQuery($offset: Int, $limit: Int) {
+  query MyQuery($offset: Int, $limit: Int, $where: enterprise_sheds_bool_exp) {
     enterprise_sheds(
       order_by: { created_at: desc }
       offset: $offset
       limit: $limit
-      where: { assigned_sheds_aggregate: { count: { predicate: { _gt: 0 } } } }
+      where: $where
     ) {
       assigned_sheds {
         id
@@ -136,12 +137,12 @@ export const GET_ASSIGNED_SHEDS = gql`
 `;
 
 export const GET_UNASSIGNED_SHEDS = gql`
-  query MyQuery($offset: Int, $limit: Int) {
+  query MyQuery($offset: Int, $limit: Int, $where: enterprise_sheds_bool_exp) {
     enterprise_sheds(
       order_by: { created_at: desc }
       offset: $offset
       limit: $limit
-      where: { assigned_sheds_aggregate: { count: { predicate: { _eq: 0 } } } }
+      where: $where
     ) {
       assigned_sheds {
         id
