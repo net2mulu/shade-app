@@ -497,7 +497,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           <Controller
             name="region_id"
             control={control}
-            disabled={isView}
             rules={{ required: "Region is required" }}
             render={({ field }) => (
               <Select
@@ -506,6 +505,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                   return { value: item.id, label: item.namejson.en };
                 })}
                 placeholder="Select Region"
+                isDisabled={isView}
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
@@ -540,13 +540,13 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="zone_id"
             control={control}
             rules={{ required: "Zone is required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
                 options={dataZone.base_zone.map((item) => {
                   return { value: item.id, label: item.namejson.en };
                 })}
+                isDisabled={isView}
                 placeholder="Select Zone"
                 styles={{
                   control: (baseStyles, state) => ({
@@ -582,13 +582,13 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="city_id"
             control={control}
             rules={{ required: "City is required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
                 options={dataCity.base_cities.map((item) => {
                   return { value: item.id, label: item.namejson.en };
                 })}
+                isDisabled={isView}
                 placeholder="Select City"
                 styles={{
                   control: (baseStyles, state) => ({
@@ -624,7 +624,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="kebele_id"
             control={control}
             rules={{ required: "Kebele is required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -632,6 +631,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                   return { value: item.id, label: item.namejson.en };
                 })}
                 placeholder="Select Kebele"
+                isDisabled={isView}
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
@@ -753,12 +753,12 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="have_water"
             control={control}
             rules={{ required: "Required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
                 options={boolOptions}
                 placeholder="Select option"
+                isDisabled={isView}
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
@@ -793,12 +793,12 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="have_electricity"
             control={control}
             rules={{ required: "Required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
                 options={boolOptions}
                 placeholder="Select option"
+                isDisabled={isView}
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
@@ -833,12 +833,12 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="have_toilet"
             control={control}
             rules={{ required: "Required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
                 options={boolOptions}
                 placeholder="Select option"
+                isDisabled={isView}
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
@@ -876,12 +876,12 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="is_suitable_for_disabled_people"
             control={control}
             rules={{ required: "Required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
                 options={boolOptions}
                 placeholder="Select option"
+                isDisabled={isView}
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
@@ -921,18 +921,18 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="sector_id"
             control={control}
             rules={{ required: "Sector Type is required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
                 options={dataSector.base_sectors.map((item) => {
                   return { value: item.id, label: item.namejson.en };
                 })}
+                isDisabled={isView}
                 placeholder="Select Sector"
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
-                    borderColor: errors.kebele_id
+                    borderColor: errors.sector_id
                       ? "red"
                       : state.isFocused
                       ? "#3170B5"
@@ -965,7 +965,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="service_type_id"
             control={control}
             rules={{ required: "Service Type is required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -973,10 +972,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                   return { value: item.id, label: item.name_json.en };
                 })}
                 placeholder="Select Service"
+                isDisabled={isView}
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
-                    borderColor: errors.kebele_id
+                    borderColor: errors.service_type_id
                       ? "red"
                       : state.isFocused
                       ? "#3170B5"
@@ -1008,7 +1008,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             <Controller
               name="shed_type_id"
               control={control}
-              disabled={isView}
               rules={{
                 required:
                   selectedServiceType?.label.toLowerCase() === "shed"
@@ -1021,11 +1020,12 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                   options={dataShed.base_shed_types.map((item) => {
                     return { value: item.id, label: item.name_json.en };
                   })}
+                  isDisabled={isView}
                   placeholder="Select Shade Type"
                   styles={{
                     control: (baseStyles, state) => ({
                       ...baseStyles,
-                      borderColor: errors.kebele_id
+                      borderColor: errors.shed_type_id
                         ? "red"
                         : state.isFocused
                         ? "#3170B5"
@@ -1059,7 +1059,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="built_by_id"
             control={control}
             rules={{ required: "Built By is required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -1067,10 +1066,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                   return { value: item.id, label: item.name_json.en };
                 })}
                 placeholder="Select Option"
+                isDisabled={isView}
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
-                    borderColor: errors.kebele_id
+                    borderColor: errors.built_by_id
                       ? "red"
                       : state.isFocused
                       ? "#3170B5"
@@ -1103,7 +1103,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="construction_type_id"
             control={control}
             rules={{ required: "construction_type_id" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -1111,10 +1110,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                   return { value: item.id, label: item.name_json.en };
                 })}
                 placeholder="Select Construction Type"
+                isDisabled={isView}
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
-                    borderColor: errors.kebele_id
+                    borderColor: errors.construction_type_id
                       ? "red"
                       : state.isFocused
                       ? "#3170B5"
@@ -1153,7 +1153,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                     ? "Number of floors is required"
                     : false,
               }}
-              disabled={isView}
               render={({ field }) => (
                 <Select
                   {...field}
@@ -1161,6 +1160,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                     return { value: item.id, label: item.name_json.en };
                   })}
                   placeholder="Select Floor Number"
+                  isDisabled={isView}
                   styles={{
                     control: (baseStyles, state) => ({
                       ...baseStyles,
@@ -1197,7 +1197,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             name="construction_level_id"
             control={control}
             rules={{ required: "construction level is required" }}
-            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -1205,10 +1204,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                   return { value: item.id, label: item.name_json.en };
                 })}
                 placeholder="Select level"
+                isDisabled={isView}
                 styles={{
                   control: (baseStyles, state) => ({
                     ...baseStyles,
-                    borderColor: errors.kebele_id
+                    borderColor: errors.construction_level_id
                       ? "red"
                       : state.isFocused
                       ? "#3170B5"
@@ -1341,7 +1341,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             <Controller
               name="construction_stopped_reason_id"
               control={control}
-              disabled={isView}
+           
               rules={{
                 required:
                   selectedConstructionLevel?.label.toLowerCase() === "stopped"
@@ -1358,6 +1358,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                   )}
                   isLoading={false}
                   placeholder="Select Reason"
+                  isDisabled={isView}
                   isSearchable={false}
                   isClearable={true}
                   styles={{
@@ -1401,7 +1402,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             <Controller
               name="not_transferred_reason_id"
               control={control}
-              disabled={isView}
               rules={{
                 required:
                   (selectedConstructionLevel?.label.toLowerCase() ===
@@ -1410,6 +1410,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                     ? "Reason is required"
                     : false,
               }}
+              
               render={({ field }) => (
                 <Select
                   {...field}
@@ -1420,6 +1421,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                   )}
                   isLoading={false}
                   placeholder="Select Reason"
+                  isDisabled={isView}
                   isSearchable={false}
                   isClearable={true}
                   styles={{
@@ -1484,7 +1486,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             type="submit"
             className="inline-flex items-center gap-2 w-32 justify-center rounded-md bg-[#3170B5] py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
           >
-            {loadingSubmit ? (
+            {(loadingSubmit || loadingEditSubmit) ? (
               <ClipLoader
                 color={"white"}
                 loading={true}

@@ -1,13 +1,14 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { MdOutlineModeEdit } from "react-icons/md";
 import { IoEyeOutline } from "react-icons/io5";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { AiOutlineUsergroupAdd } from "react-icons/ai";
-import { TabStatusOptions } from "../../pages/Shade";
 import { formatDateString } from "../methods/dateConverter";
 const columnHelper = createColumnHelper();
 
-export const getColumns = (setIsOpenAssignModal, setSelectedShade) => {
+export const getColumns = (
+  setIsOpenEditModal,
+  setSelectedEnterpise,
+  setIsView
+) => {
   return [
     columnHelper.accessor("name", {
       id: "name",
@@ -55,27 +56,34 @@ export const getColumns = (setIsOpenAssignModal, setSelectedShade) => {
       id: "action",
       cell: (props) => (
         <section className="flex justify-center">
-          {/* <div className="flex justify-start items-center gap-1">
-            <button className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#4D515A] group relative">
+          <div className="flex justify-start items-center gap-1">
+            <button
+              className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#4D515A] group relative"
+              onClick={() => {
+                setIsOpenEditModal(true);
+                setSelectedEnterpise(props.row.original);
+                setIsView(false);
+              }}
+            >
               <MdOutlineModeEdit className="w-4 h-6" />
               <p className="text-[8px] absolute left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 edit
               </p>
             </button>
-            <button className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#4D515A] group relative">
+            <button
+              className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#4D515A] group relative"
+              onClick={() => {
+                setIsOpenEditModal(true);
+                setSelectedEnterpise(props.row.original);
+                setIsView(true);
+              }}
+            >
               <IoEyeOutline className="w-4 h-6" />
               <p className="text-[8px] absolute left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 view
               </p>
             </button>
-
-            <button className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#E11D48] group relative">
-              <RiDeleteBinLine className="w-4 h-6" />
-              <p className="text-[8px] absolute left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                delete
-              </p>
-            </button>
-          </div> */} 
+          </div>
         </section>
       ),
       header: () => <span>Action</span>,

@@ -75,6 +75,7 @@ export const getColumns = (
               className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#4D515A] group relative"
               onClick={() => {
                 setSelectedShade(props.row.original);
+                setIsView(false);
                 setIsOpenEditModal(true);
               }}
             >

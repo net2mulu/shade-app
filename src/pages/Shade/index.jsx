@@ -201,7 +201,10 @@ const Shade = () => {
         setIsOpen={setIsOpenAssignModal}
         refetch={refetch}
         title="Assign Shades for Enterprises"
-        afterClose={() => setSelectedShade(null)}
+        afterClose={() => {
+          setIsView(false);
+          setSelectedShade(null);
+        }}
       >
         <AssignShade
           selectedShade={selectedShade}

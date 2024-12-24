@@ -12,7 +12,9 @@ export const TabStatusOptions = ["all", "created", "assigned"];
 
 const Enterprise = () => {
   const [isOpenRegisterModal, setIsOpennRegisterModal] = useState(false);
+  const [isOpenEditModal, setIsOpenEditModal] = useState(false);
   const [selectedEnterprise, setSelectedEnterpise] = useState(null);
+  const [isView, setIsView] = useState(false);
 
   const [pagination, setPagination] = useState({
     perPage: 10,
@@ -35,8 +37,29 @@ const Enterprise = () => {
         isOpen={isOpenRegisterModal}
         setIsOpen={setIsOpennRegisterModal}
         title={"Register Enterprise"}
+        afterClose={() => {
+          setIsView(false);
+          setSelectedEnterpise(null);
+        }}
       >
         <AddEnterprsise setIsOpen={setIsOpennRegisterModal} refetch={refetch} />
+      </ModalContainer>
+
+      <ModalContainer
+        isOpen={isOpenEditModal}
+        setIsOpen={setIsOpenEditModal}
+        title={isView ? "Enterprise Information" : "Edit Enterprise"}
+        afterClose={() => {
+          setIsView(false);
+          setSelectedEnterpise(null);
+        }}
+      >
+        <AddEnterprsise
+          setIsOpen={setIsOpenEditModal}
+          refetch={refetch}
+          selectedEnterprise={selectedEnterprise}
+          isView={isView}
+        />
       </ModalContainer>
 
       <div className="my-2 p-4 px-6 w-full flex flex-col justify-between h-full">
@@ -67,7 +90,9 @@ const Enterprise = () => {
                 <EnterpriseTable
                   isLoading={loading}
                   enterpriseList={loading ? [] : data}
-                  setIsOpenAssignModal={setIsOpennRegisterModal}
+                  setIsOpenEditModal={setIsOpenEditModal}
+                  setSelectedEnterpise={setSelectedEnterpise}
+                  setIsView={setIsView}
                 />
               </div>
             </div>

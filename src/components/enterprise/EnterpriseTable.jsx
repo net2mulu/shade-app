@@ -9,13 +9,19 @@ import TableLoader from "../loader/tableLoader";
 import EmptyTable from "../../components/Shade/EmptyTable";
 import { getColumns } from "../../utils/cols/enterpriseCols";
 
-const EnterpriseTable = ({ isLoading, enterpriseList, setIsOpenAssignModal, setSelectedEnterpise }) => {
+const EnterpriseTable = ({
+  isLoading,
+  enterpriseList,
+  setIsOpenEditModal,
+  setSelectedEnterpise,
+  setIsView,
+}) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const columns = getColumns(setIsOpenAssignModal, setSelectedEnterpise);
+  const columns = getColumns(setIsOpenEditModal, setSelectedEnterpise, setIsView);
   const table = useReactTable({
     data: enterpriseList?.enterprise_enterprises ?? [],
     columns,

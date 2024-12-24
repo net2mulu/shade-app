@@ -357,7 +357,22 @@ export const GET_ENTERPRISES = gql`
     ) {
       id
       created_at
+      used_for_intended_purpose
+      reason_not_used_for_intended_purpose
+      contract_transferred_time
+      contract_expiration_time
+      young_male
+      young_female
+      internally_displaced_male
+      internally_displaced_female
+      people_with_disabilities_male
+      people_with_disabilities_female
+      returning_citizens_male
+      returning_citizens_female
+      returning_citizens_male
+      returning_citizens_female
       enterprise {
+        id
         namejson
         employees_aggregate {
           aggregate {
