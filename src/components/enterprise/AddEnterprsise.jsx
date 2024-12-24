@@ -17,7 +17,6 @@ import { Button } from "@headlessui/react";
 import { ClipLoader } from "react-spinners";
 
 const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
-  console.log(selectedEnterprise);
   const {
     register,
     handleSubmit,

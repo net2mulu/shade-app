@@ -5,7 +5,6 @@ import MainLayout from "./components/layout";
 export default function App() {
   const { pathname } = useLocation();
   const nonLayoutRoutes = ["/"];
-console.log(routes)
   return (
     <>
       {nonLayoutRoutes.includes(pathname) ? (
