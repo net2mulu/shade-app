@@ -74,6 +74,9 @@ export const getQuery = (selectedTab, searchText) => {
 const Shade = () => {
   const [isOpenRegisterModal, setIsOpennRegisterModal] = useState(false);
   const [isOpenAssignModal, setIsOpenAssignModal] = useState(false);
+  const [isOpenEditModal, setIsOpenEditModal] = useState(false);
+  const [isView, setIsView] = useState(false);
+
   const [selectedShade, setSelectedShade] = useState(null);
   const [searchText, setSearchText] = useState(null);
   const [tabStatus, setTabStatus] = useState(TabStatusOptions[0]);
@@ -99,28 +102,6 @@ const Shade = () => {
 
   return (
     <>
-      <ModalContainer
-        isOpen={isOpenRegisterModal}
-        setIsOpen={setIsOpennRegisterModal}
-        refetch={refetch}
-        title="Register Shade"
-      >
-        <RegisterShade setIsOpen={setIsOpennRegisterModal} refetch={refetch} />
-      </ModalContainer>
-
-      <ModalContainer
-        isOpen={isOpenAssignModal}
-        setIsOpen={setIsOpenAssignModal}
-        refetch={refetch}
-        title="Assign Shades for Enterprises"
-      >
-        <AssignShade
-          selectedShade={selectedShade}
-          setIsOpen={setIsOpenAssignModal}
-          refetch={refetch}
-        />
-      </ModalContainer>
-
       <div className="my-2 p-4 px-6 w-full flex flex-col justify-between h-full">
         <div className="w-full flex flex-col gap-2">
           <>
@@ -165,6 +146,8 @@ const Shade = () => {
                   tabStatus={tabStatus}
                   setIsOpenAssignModal={setIsOpenAssignModal}
                   setSelectedShade={setSelectedShade}
+                  setIsOpenEditModal={setIsOpenEditModal}
+                  setIsView={setIsView}
                 />
               </section>
             </article>
@@ -180,6 +163,52 @@ const Shade = () => {
         }
         refetch={refetch}
       />
+
+      <ModalContainer
+        isOpen={isOpenRegisterModal}
+        setIsOpen={setIsOpennRegisterModal}
+        refetch={refetch}
+        title="Register Shade"
+        afterClose={() => setSelectedShade(null)}
+      >
+        <RegisterShade
+          setIsOpen={setIsOpennRegisterModal}
+          refetch={refetch}
+          selectedShade={null}
+        />
+      </ModalContainer>
+
+      <ModalContainer
+        isOpen={isOpenEditModal}
+        setIsOpen={setIsOpenEditModal}
+        refetch={refetch}
+        title={isView ? "Shade Info" : "Edit Shade"}
+        afterClose={() => {
+          setIsView(false);
+          setSelectedShade(null);
+        }}
+      >
+        <RegisterShade
+          setIsOpen={setIsOpenEditModal}
+          refetch={refetch}
+          selectedShade={selectedShade}
+          isView={isView}
+        />
+      </ModalContainer>
+
+      <ModalContainer
+        isOpen={isOpenAssignModal}
+        setIsOpen={setIsOpenAssignModal}
+        refetch={refetch}
+        title="Assign Shades for Enterprises"
+        afterClose={() => setSelectedShade(null)}
+      >
+        <AssignShade
+          selectedShade={selectedShade}
+          setIsOpen={setIsOpenAssignModal}
+          refetch={refetch}
+        />
+      </ModalContainer>
     </>
   );
 };

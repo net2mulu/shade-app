@@ -30,7 +30,7 @@ const Pagination = ({loading, pagination, setPagination, totalPages, refetch}) =
 
   return (
     <section className="flex justify-center items-center md:justify-end gap-10">
-      <div className="flex items-center gap-2">
+    {!loading && <div className="flex items-center gap-2">
         <label htmlFor="rowsPerPage" className="text-sm text-gray-700">
           Rows per page:
         </label>
@@ -46,7 +46,7 @@ const Pagination = ({loading, pagination, setPagination, totalPages, refetch}) =
             </option>
           ))}
         </select>
-      </div>
+      </div>}
         <ReactPaginate
           renderOnZeroPageCount={false}
           breakLabel="..."

@@ -33,17 +33,25 @@ export const GET_SHEDS = gql`
       name
       shed_type {
         name_json
+        __typename
+        id
       }
       service_type {
         name_json
+        __typename
+        id
       }
       number_of_floors_id
       production_area
       number_of_floor {
         name_json
+        __typename
+        id
       }
       not_transferred_reason {
         name_json
+        __typename
+        id
       }
       manufacturing_place
       is_suitable_for_disabled_people
@@ -56,9 +64,49 @@ export const GET_SHEDS = gql`
       construction_stopped_reason_id
       construction_stopped_date
       construction_status
-      construction_completed_date
       complete_infrastructure
       block_no
+      __typename
+      city {
+        id
+        namejson
+      }
+      kebele {
+        id
+        namejson
+      }
+      not_transferred_reason_id
+      number_of_enterprises
+      built_by {
+        name_json
+        id
+      }
+      construction_completed_date
+      construction_level {
+        id
+        name_json
+      }
+      construction_stopped_reason {
+        id
+        name_json
+      }
+      construction_type {
+        id
+        name_json
+      }
+      region {
+        namejson
+        id
+      }
+      sector {
+        id
+        namejson
+      }
+      zone {
+        id
+        namejson
+      }
+      total_cost_of_production
     }
     enterprise_sheds_aggregate {
       aggregate {
@@ -101,17 +149,25 @@ export const GET_ASSIGNED_SHEDS = gql`
       name
       shed_type {
         name_json
+        __typename
+        id
       }
       service_type {
         name_json
+        __typename
+        id
       }
       number_of_floors_id
       production_area
       number_of_floor {
         name_json
+        __typename
+        id
       }
       not_transferred_reason {
         name_json
+        __typename
+        id
       }
       manufacturing_place
       is_suitable_for_disabled_people
@@ -124,9 +180,49 @@ export const GET_ASSIGNED_SHEDS = gql`
       construction_stopped_reason_id
       construction_stopped_date
       construction_status
-      construction_completed_date
       complete_infrastructure
       block_no
+      __typename
+      city {
+        id
+        namejson
+      }
+      kebele {
+        id
+        namejson
+      }
+      not_transferred_reason_id
+      number_of_enterprises
+      built_by {
+        name_json
+        id
+      }
+      construction_completed_date
+      construction_level {
+        id
+        name_json
+      }
+      construction_stopped_reason {
+        id
+        name_json
+      }
+      construction_type {
+        id
+        name_json
+      }
+      region {
+        namejson
+        id
+      }
+      sector {
+        id
+        namejson
+      }
+      zone {
+        id
+        namejson
+      }
+      total_cost_of_production
     }
     enterprise_sheds_aggregate {
       aggregate {
@@ -169,17 +265,25 @@ export const GET_UNASSIGNED_SHEDS = gql`
       name
       shed_type {
         name_json
+        __typename
+        id
       }
       service_type {
         name_json
+        __typename
+        id
       }
       number_of_floors_id
       production_area
       number_of_floor {
         name_json
+        __typename
+        id
       }
       not_transferred_reason {
         name_json
+        __typename
+        id
       }
       manufacturing_place
       is_suitable_for_disabled_people
@@ -192,9 +296,49 @@ export const GET_UNASSIGNED_SHEDS = gql`
       construction_stopped_reason_id
       construction_stopped_date
       construction_status
-      construction_completed_date
       complete_infrastructure
       block_no
+      __typename
+      city {
+        id
+        namejson
+      }
+      kebele {
+        id
+        namejson
+      }
+      not_transferred_reason_id
+      number_of_enterprises
+      built_by {
+        name_json
+        id
+      }
+      construction_completed_date
+      construction_level {
+        id
+        name_json
+      }
+      construction_stopped_reason {
+        id
+        name_json
+      }
+      construction_type {
+        id
+        name_json
+      }
+      region {
+        namejson
+        id
+      }
+      sector {
+        id
+        namejson
+      }
+      zone {
+        id
+        namejson
+      }
+      total_cost_of_production
     }
     enterprise_sheds_aggregate {
       aggregate {

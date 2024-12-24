@@ -21,7 +21,7 @@ import {
 } from "../../apollo/base_data/query";
 import Loader from "../loader";
 import { boolOptions } from "../../utils/data";
-import { INSERT_SHED } from "../../apollo/shades/mutation";
+import { INSERT_SHED, UPDATE_SHED } from "../../apollo/shades/mutation";
 import toast from "react-hot-toast";
 import { transformObject } from "../../utils/methods/transferData";
 import { GET_SHEDS } from "../../apollo/shades/query";
@@ -42,14 +42,115 @@ function handleTheme(theme) {
   };
 }
 
-const RegisterShade = ({ setIsOpen, refetch }) => {
+const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
   const {
     register,
     handleSubmit,
     control,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm(
+    selectedShade
+      ? {
+          defaultValues: {
+            name: selectedShade?.name.en ?? "",
+            block_no: selectedShade?.block_no ?? "",
+            region_id: {
+              label: selectedShade?.region?.namejson?.en,
+              value: selectedShade?.region?.id,
+            },
+            city_id: {
+              label: selectedShade?.city?.namejson?.en,
+              value: selectedShade?.city?.id,
+            },
+            zone_id: {
+              label: selectedShade?.zone?.namejson?.en,
+              value: selectedShade?.zone?.id,
+            },
+            kebele_id: {
+              label: selectedShade?.kebele?.namejson?.en,
+              value: selectedShade?.kebele?.id,
+            },
+            production_area: selectedShade?.production_area ?? "",
+            manufacturing_place: selectedShade?.manufacturing_place ?? "",
+            number_of_enterprises: selectedShade?.number_of_enterprises ?? "",
+            sector_id: {
+              label: selectedShade?.sector?.namejson?.en,
+              value: selectedShade?.sector?.id,
+            },
+            service_type_id: {
+              label: selectedShade?.service_type?.name_json?.en,
+              value: selectedShade?.service_type?.id,
+            },
+            built_by_id: {
+              label: selectedShade?.built_by?.name_json?.en,
+              value: selectedShade?.built_by?.id,
+            },
+            construction_type_id: {
+              label: selectedShade?.construction_type?.name_json?.en,
+              value: selectedShade?.construction_type?.id,
+            },
+            construction_level_id: {
+              label: selectedShade?.construction_level?.name_json?.en,
+              value: selectedShade?.construction_level?.id,
+            },
+            shed_type_id: {
+              label: selectedShade?.shed_type?.name_json?.en,
+              value: selectedShade?.shed_type?.id,
+            },
+            have_water: {
+              label: selectedShade?.have_water ? "Yes" : "No",
+              value: selectedShade?.have_water ? true : false,
+            },
+            have_toilet: {
+              label: selectedShade?.have_toilet ? "Yes" : "No",
+              value: selectedShade?.have_toilet ? true : false,
+            },
+            have_electricity: {
+              label: selectedShade?.have_electricity ? "Yes" : "No",
+              value: selectedShade?.have_electricity ? true : false,
+            },
+            is_suitable_for_disabled_people: {
+              label: selectedShade?.is_suitable_for_disabled_people
+                ? "Yes"
+                : "No",
+              value: selectedShade?.is_suitable_for_disabled_people
+                ? true
+                : false,
+            },
+            number_of_floors_id: {
+              label: selectedShade?.number_of_floor?.name_json?.en,
+              value: selectedShade?.number_of_floor?.id,
+            },
+            construction_status: selectedShade?.construction_status ?? "",
+            total_cost_of_production:
+              selectedShade?.total_cost_of_production ?? "",
+            construction_work_started_date:
+              selectedShade?.construction_work_started_date ?? "",
+            ...(selectedShade?.construction_completed_date && {
+              construction_completed_date:
+                selectedShade.construction_completed_date,
+            }),
+            ...(selectedShade?.construction_stopped_date && {
+              construction_stopped_date:
+                selectedShade.construction_stopped_date,
+            }),
+            ...(selectedShade?.construction_stopped_reason && {
+              construction_stopped_reason_id: {
+                label: selectedShade?.construction_stopped_reason.name_json.en,
+                value: selectedShade?.construction_stopped_reason?.id,
+              },
+            }),
+            ...(selectedShade?.not_transferred_reason && {
+              not_transferred_reason_id: {
+                label: selectedShade?.not_transferred_reason.name_json.en,
+                value: selectedShade?.not_transferred_reason?.id,
+              },
+            }),
+          },
+        }
+      : {}
+  );
 
   const client = useMemo(() => resetClient(), []);
   const updatedClient = useMemo(() => getTempClient(), []);
@@ -57,7 +158,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
   const [createShed, { loading: loadingSubmit }] = useMutation(INSERT_SHED, {
     onCompleted: () => {
       toast.success("Shed added successfully");
-      refetch()
+      refetch();
       setIsOpen(false);
     },
     onError: (err) => {
@@ -73,7 +174,30 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
     client: updatedClient,
   });
 
-  const { loading: loadingKebele, data: dataKebele } = useQuery(GET_KEBELES, {
+  const [editShed, { loading: loadingEditSubmit }] = useMutation(UPDATE_SHED, {
+    onCompleted: () => {
+      toast.success("Shed updated successfully");
+      refetch();
+      setIsOpen(false);
+    },
+    onError: (err) => {
+      console.error(err);
+      toast.error("Failed to update shed. Please try again.");
+    },
+    refetchQueries: [
+      {
+        query: GET_SHEDS,
+        variables: { limit: 20 },
+      },
+    ],
+    client: updatedClient,
+  });
+
+  const {
+    loading: loadingKebele,
+    data: dataKebele,
+    error: errorKebele,
+  } = useQuery(GET_KEBELES, {
     variables: {
       limit: 10,
     },
@@ -81,12 +205,20 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
     client,
   });
 
-  const { loading: loadingCity, data: dataCity } = useQuery(GET_CITIES, {
+  const {
+    loading: loadingCity,
+    data: dataCity,
+    error: errorCity,
+  } = useQuery(GET_CITIES, {
     skip: false,
     client,
   });
 
-  const { loading: loadingZone, data: dataZone } = useQuery(GET_ZONES, {
+  const {
+    loading: loadingZone,
+    data: dataZone,
+    error: errorZone,
+  } = useQuery(GET_ZONES, {
     variables: {
       limit: 10,
     },
@@ -94,70 +226,92 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
     client,
   });
 
-  const { loading: loadingRegion, data: dataRegion } = useQuery(GET_REGIONS, {
+  const {
+    loading: loadingRegion,
+    data: dataRegion,
+    error: errorRegion,
+  } = useQuery(GET_REGIONS, {
     skip: false,
     client,
   });
 
-  const { loading: loadingSector, data: dataSector } = useQuery(GET_SECTORS, {
+  const {
+    loading: loadingSector,
+    data: dataSector,
+    error: errorSector,
+  } = useQuery(GET_SECTORS, {
     skip: false,
     client,
   });
 
-  const { loading: loadingService, data: dataService } = useQuery(
-    GET_SERVICES_TYPES,
-    {
-      skip: false,
-      client: updatedClient,
-    }
-  );
-
-  const { loading: loadingShed, data: dataShed } = useQuery(GET_SHED_TYPES, {
+  const {
+    loading: loadingService,
+    data: dataService,
+    error: errorService,
+  } = useQuery(GET_SERVICES_TYPES, {
     skip: false,
     client: updatedClient,
   });
 
-  const { loading: loadingBuiltBy, data: dataBuiltBy } = useQuery(
-    GET_BUILT_BY,
-    {
-      skip: false,
-      client: updatedClient,
-    }
-  );
+  const {
+    loading: loadingShed,
+    data: dataShed,
+    error: errorShed,
+  } = useQuery(GET_SHED_TYPES, {
+    skip: false,
+    client: updatedClient,
+  });
 
-  const { loading: loadingConLevels, data: dataConLevels } = useQuery(
-    GET_CONSTRUCTION_LEVELS,
-    {
-      skip: false,
-      client: updatedClient,
-    }
-  );
+  const {
+    loading: loadingBuiltBy,
+    data: dataBuiltBy,
+    error: errorBuiltBy,
+  } = useQuery(GET_BUILT_BY, {
+    skip: false,
+    client: updatedClient,
+  });
 
-  const { loading: loadingConTypes, data: dataConTypes } = useQuery(
-    GET_CONSTRUCTION_TYPES,
-    {
-      skip: false,
-      client: updatedClient,
-    }
-  );
+  const {
+    loading: loadingConLevels,
+    data: dataConLevels,
+    error: errorConLevels,
+  } = useQuery(GET_CONSTRUCTION_LEVELS, {
+    skip: false,
+    client: updatedClient,
+  });
 
-  const { loading: loadingReasonTrans, data: dataReasonTrans } = useQuery(
-    GET_CONSTRUCTION_NOT_TRANSFERRED_REASON,
-    {
-      skip: false,
-      client: updatedClient,
-    }
-  );
+  const {
+    loading: loadingConTypes,
+    data: dataConTypes,
+    error: errorConTypes,
+  } = useQuery(GET_CONSTRUCTION_TYPES, {
+    skip: false,
+    client: updatedClient,
+  });
 
-  const { loading: loadingReasonStop, data: dataReasonStop } = useQuery(
-    GET_CONSTRUCTION_STOPPED_REASON,
-    {
-      skip: false,
-      client: updatedClient,
-    }
-  );
+  const {
+    loading: loadingReasonTrans,
+    data: dataReasonTrans,
+    error: errorReasonTrans,
+  } = useQuery(GET_CONSTRUCTION_NOT_TRANSFERRED_REASON, {
+    skip: false,
+    client: updatedClient,
+  });
 
-  const { loading: loadingFloorNo, data: dataFloorNo } = useQuery(GET_FLOORS, {
+  const {
+    loading: loadingReasonStop,
+    data: dataReasonStop,
+    error: errorReasonStop,
+  } = useQuery(GET_CONSTRUCTION_STOPPED_REASON, {
+    skip: false,
+    client: updatedClient,
+  });
+
+  const {
+    loading: loadingFloorNo,
+    data: dataFloorNo,
+    error: errorFloorNo,
+  } = useQuery(GET_FLOORS, {
     skip: false,
     client: updatedClient,
   });
@@ -178,6 +332,28 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
     loadingFloorNo
   ) {
     return <Loader />;
+  }
+
+  if (
+    errorKebele ||
+    errorCity ||
+    errorZone ||
+    errorRegion ||
+    errorService ||
+    errorSector ||
+    errorShed ||
+    errorBuiltBy ||
+    errorConLevels ||
+    errorConTypes ||
+    errorReasonTrans ||
+    errorReasonStop ||
+    errorFloorNo
+  ) {
+    return (
+      <div className="my-6 text-center text-red-500">
+        <p>Error fetching data</p>
+      </div>
+    );
   }
 
   const onSubmit = async (data) => {
@@ -207,14 +383,26 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
     }
 
     try {
-      await createShed({
-        variables: {
-          ...parsedData,
-          ...leftFields,
-          total_cost_of_production: data.total_cost_of_production.toString(),
-          name: {"en": data.name},
-        },
-      });
+      selectedShade
+        ? await editShed({
+            variables: {
+              ...parsedData,
+              ...leftFields,
+              total_cost_of_production:
+                data.total_cost_of_production.toString(),
+              name: { en: data.name },
+              shedId: selectedShade.id,
+            },
+          })
+        : await createShed({
+            variables: {
+              ...parsedData,
+              ...leftFields,
+              total_cost_of_production:
+                data.total_cost_of_production.toString(),
+              name: { en: data.name },
+            },
+          });
     } catch (error) {
       console.error("Error updating user:", error);
     }
@@ -250,6 +438,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
           <input
             type="text"
             id="name"
+            disabled={isView}
             placeholder="eg. megenagna"
             {...register("name", { required: "Name is required" })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
@@ -277,6 +466,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
           <input
             type="text"
             id="block_no"
+            disabled={isView}
             placeholder="eg. block 14"
             {...register("block_no", { required: "Block number is required" })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
@@ -307,6 +497,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
           <Controller
             name="region_id"
             control={control}
+            disabled={isView}
             rules={{ required: "Region is required" }}
             render={({ field }) => (
               <Select
@@ -349,6 +540,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="zone_id"
             control={control}
             rules={{ required: "Zone is required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -390,6 +582,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="city_id"
             control={control}
             rules={{ required: "City is required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -431,6 +624,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="kebele_id"
             control={control}
             rules={{ required: "Kebele is required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -476,6 +670,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
           <input
             name="production_area"
             type="text"
+            disabled={isView}
             placeholder="eg. 5 * 5"
             id="production_area"
             className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
@@ -503,6 +698,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
           <input
             name="manufacturing_place"
             type="text"
+            disabled={isView}
             placeholder="address"
             id="manufacturing_place"
             className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
@@ -530,6 +726,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
           <input
             name="number_of_enterprises"
             type="number"
+            disabled={isView}
             placeholder="address"
             id="number_of_enterprises"
             className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
@@ -556,6 +753,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="have_water"
             control={control}
             rules={{ required: "Required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -595,6 +793,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="have_electricity"
             control={control}
             rules={{ required: "Required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -634,6 +833,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="have_toilet"
             control={control}
             rules={{ required: "Required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -676,6 +876,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="is_suitable_for_disabled_people"
             control={control}
             rules={{ required: "Required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -720,6 +921,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="sector_id"
             control={control}
             rules={{ required: "Sector Type is required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -763,6 +965,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="service_type_id"
             control={control}
             rules={{ required: "Service Type is required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -805,6 +1008,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             <Controller
               name="shed_type_id"
               control={control}
+              disabled={isView}
               rules={{
                 required:
                   selectedServiceType?.label.toLowerCase() === "shed"
@@ -855,6 +1059,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="built_by_id"
             control={control}
             rules={{ required: "Built By is required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -898,6 +1103,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="construction_type_id"
             control={control}
             rules={{ required: "construction_type_id" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -947,6 +1153,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
                     ? "Number of floors is required"
                     : false,
               }}
+              disabled={isView}
               render={({ field }) => (
                 <Select
                   {...field}
@@ -990,6 +1197,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="construction_level_id"
             control={control}
             rules={{ required: "construction level is required" }}
+            disabled={isView}
             render={({ field }) => (
               <Select
                 {...field}
@@ -1036,6 +1244,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
               type="number"
               placeholder="e.g., 50"
               id="construction_status"
+              disabled={isView}
               className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
               {...register("construction_status", {
                 required: "Construction status is required",
@@ -1071,6 +1280,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             name="construction_work_started_date"
             type="date"
             placeholder="e.g., block 14"
+            disabled={isView}
             id="construction_work_started_date"
             className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
             {...register("construction_work_started_date", {
@@ -1098,6 +1308,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
               name="construction_completed_date"
               type="date"
               placeholder="e.g., block 14"
+              disabled={isView}
               id="construction_completed_date"
               className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
               {...register("construction_completed_date", {
@@ -1130,6 +1341,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             <Controller
               name="construction_stopped_reason_id"
               control={control}
+              disabled={isView}
               rules={{
                 required:
                   selectedConstructionLevel?.label.toLowerCase() === "stopped"
@@ -1189,6 +1401,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             <Controller
               name="not_transferred_reason_id"
               control={control}
+              disabled={isView}
               rules={{
                 required:
                   (selectedConstructionLevel?.label.toLowerCase() ===
@@ -1253,6 +1466,7 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
             })}
             name="total_cost_of_production"
             type="number"
+            disabled={isView}
             placeholder="eg. 100000"
             id="total_cost_of_production"
             className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
@@ -1264,28 +1478,29 @@ const RegisterShade = ({ setIsOpen, refetch }) => {
           )}
         </div>
       </div>
-
-      <div className="flex justify-end items-center w-full mt-4">
-        <Button
-          type="submit"
-          className="inline-flex items-center gap-2 w-32 justify-center rounded-md bg-[#3170B5] py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
-        >
-        {loadingSubmit ? (
-            <ClipLoader
-              color={"white"}
-              loading={true}
-              size={16}
-              aria-label="Loading Spinner"
-              data-testid="loader"
-              className="py-2"
-
-            />
-          ) : (
-            "Register"
-          )}
-          
-        </Button>
-      </div>
+      {!isView && (
+        <div className="flex justify-end items-center w-full mt-4">
+          <Button
+            type="submit"
+            className="inline-flex items-center gap-2 w-32 justify-center rounded-md bg-[#3170B5] py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
+          >
+            {loadingSubmit ? (
+              <ClipLoader
+                color={"white"}
+                loading={true}
+                size={16}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+                className="py-2"
+              />
+            ) : selectedShade ? (
+              "Update"
+            ) : (
+              "Register"
+            )}
+          </Button>
+        </div>
+      )}
     </form>
   );
 };

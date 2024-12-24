@@ -10,7 +10,9 @@ const columnHelper = createColumnHelper();
 export const getColumns = (
   tabStatus,
   setIsOpenAssignModal,
-  setSelectedShade
+  setSelectedShade,
+  setIsOpenEditModal,
+  setIsView
 ) => {
   return [
     columnHelper.accessor("name", {
@@ -24,9 +26,7 @@ export const getColumns = (
     }),
     columnHelper.accessor("block_no", {
       id: "block_no",
-      cell: (props) => (
-        <p className="clamp-1">{props.row.original.block_no}</p>
-      ),
+      cell: (props) => <p className="clamp-1">{props.row.original.block_no}</p>,
       header: () => <span className="uppercase">Block No.</span>,
     }),
     columnHelper.accessor("assigned_sheds", {
@@ -71,13 +71,26 @@ export const getColumns = (
       cell: (props) => (
         <section className="flex justify-center">
           <div className="flex justify-start items-center gap-1">
-            <button className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#4D515A] group relative">
+            <button
+              className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#4D515A] group relative"
+              onClick={() => {
+                setSelectedShade(props.row.original);
+                setIsOpenEditModal(true);
+              }}
+            >
               <MdOutlineModeEdit className="w-4 h-6" />
               <p className="text-[8px] absolute left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 edit
               </p>
             </button>
-            <button className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#4D515A] group relative">
+            <button
+              className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#4D515A] group relative"
+              onClick={() => {
+                setSelectedShade(props.row.original);
+                setIsView(true);
+                setIsOpenEditModal(true);
+              }}
+            >
               <IoEyeOutline className="w-4 h-6" />
               <p className="text-[8px] absolute left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 view
@@ -100,12 +113,12 @@ export const getColumns = (
                 </p>
               </button>
             )}
-            <button className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#E11D48] group relative">
+            {/* <button className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#E11D48] group relative">
               <RiDeleteBinLine className="w-4 h-6" />
               <p className="text-[8px] absolute left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 delete
               </p>
-            </button>
+            </button> */}
           </div>
         </section>
       ),

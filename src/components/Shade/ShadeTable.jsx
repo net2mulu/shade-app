@@ -9,13 +9,13 @@ import TableLoader from "../loader/tableLoader";
 import { getColumns } from "../../utils/cols/shadeCols";
 import EmptyTable from "./EmptyTable"
 
-const ShadeTable = ({ isLoading, shadsList, tabStatus, setIsOpenAssignModal, setSelectedShade }) => {
+const ShadeTable = ({ isLoading, shadsList, tabStatus, setIsOpenAssignModal, setSelectedShade, setIsOpenEditModal, setIsView }) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const columns = getColumns(tabStatus, setIsOpenAssignModal, setSelectedShade);
+  const columns = getColumns(tabStatus, setIsOpenAssignModal, setSelectedShade, setIsOpenEditModal, setIsView);
   const table = useReactTable({
     data: shadsList?.enterprise_sheds ?? [],
     columns,
