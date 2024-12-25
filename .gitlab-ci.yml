@@ -1,0 +1,23 @@
+
+stages:        
+  - deploy
+
+# deploy-job-main:      
+#   stage: deploy
+#   only:
+#     - main
+#   tags:
+#     - lmis-runner-server02
+#   script:
+#     - mv .env.prod .env        
+#     - docker-compose up -d --build 
+
+deploy-job-staging:      
+  stage: deploy
+  only:
+    - staging
+  tags:
+    - lmis-runner-server07
+  script:       
+    - mv .env.stg .env        
+    - docker-compose-staging up -d --build 
