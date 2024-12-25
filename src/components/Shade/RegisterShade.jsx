@@ -374,7 +374,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
     }
 
     if (!data?.construction_stopped_date) {
-      leftFields["construction_stopped_date"] = "2024-12-20";
+      leftFields["construction_stopped_date"] = "2000-11-11";
     }
 
     if (!data?.created_by_id) {

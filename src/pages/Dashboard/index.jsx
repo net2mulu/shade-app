@@ -1,37 +1,23 @@
-import React, { useEffect, useRef } from "react";
 import Map from "../../assets/svg/addisAbabaMap.svg";
 // import DashLineChart from "../../components/Dashboard/LineChart";
 import TestChart from "../../components/Dashboard/TestChart";
 import BarStacked from "../../components/Dashboard/StackedBar";
 import RegisteredShadeTypes from "../../components/Dashboard/RegisterdAhadeTypes";
+import ShadesCountBox from "../../components/Dashboard/ShadesCountBox";
 
+const cardList = [
+  { color: "bg-[#0EB01D]", val: 1 },
+  { color: "bg-[#FAAB3C]", val: 2 },
+  { color: "bg-[#1F74EC]", val: 3 },
+  { color: "bg-[#4E1BD9]", val: 4 },
+];
 const Dashboard = () => {
-  const cardList = [
-    { color: "bg-[#0EB01D]", val: 1 },
-    { color: "bg-[#FAAB3C]", val: 2 },
-    { color: "bg-[#1F74EC]", val: 3 },
-    { color: "bg-[#4E1BD9]", val: 4 },
-  ];
-
   return (
     <>
       <div className="flex flex-col gap-4 w-full p-6 h-full">
         <div className="grid grid-cols-4 gap-4 h-max w-full">
-          <div className="grid col-span-1 grid-cols-2 gap-4 h-full w-full">
-            {cardList.map((item) => (
-              <div
-                key={item.val}
-                className="flex justify-center items-center gap-4 bg-white rounded-lg p-4"
-              >
-                <div className={`w-3 h-24 ${item.color} rounded-lg`}></div>
-                <div className="h-full  flex flex-col justify-center gap-2">
-                  <p className="text-2xl font-bold text-[#19497D]">79</p>
-                  <p className=" text-[#959595]">Total Number of Shades</p>
-                </div>
-              </div>
-            ))}
-          </div>
 
+        <ShadesCountBox />
           <div className="flex flex-col h-full w-full col-span-2 bg-white rounded-lg p-4">
             <div className=" flex items-center justify-between gap-2">
               <p className="font-medium text-xl  text-[#7E92A2]">

@@ -407,3 +407,33 @@ export const GET_ORGANIZATIONS = gql`
     }
   }
 `;
+
+export const GET_COMBINED_SHED_COUNT = gql`
+  query CombinedQuery {
+    totalShedsCount: enterprise_sheds_aggregate {
+      aggregate {
+        count
+      }
+    }
+    assignedShedsCount: enterprise_sheds_aggregate(
+      where: { assigned_sheds_aggregate: { count: { predicate: { _gt: 0 } } } }
+    ) {
+      aggregate {
+        count
+      }
+    }
+    unassignedShedsCount: enterprise_sheds_aggregate(
+      where: { assigned_sheds_aggregate: { count: { predicate: { _eq: 0 } } } }
+    ) {
+      aggregate {
+        count
+      }
+    }
+    underConstructionsShade: enterprise_sheds_aggregate(where: {construction_status: {_eq: "100"}}) {
+      aggregate {
+        count
+
+      }
+    }
+  }
+`;

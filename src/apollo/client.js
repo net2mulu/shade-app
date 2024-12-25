@@ -49,7 +49,7 @@ const authLink = setContext((operation, { headers }) => {
       headers: {
         ...headers,
         "x-hasura-role": "anonymous",
-        "x-real-ip": "123"
+        "x-real-ip": "123",
       },
     };
   }
@@ -134,11 +134,13 @@ export const getTempClient = () => {
     uri: process.env.REACT_APP_BACKEND_URL,
   });
 
+  const token = localStorage.getItem("access_token") ?? "";
+
   const authLinkTemp = setContext((operation, { headers }) => {
     return {
       headers: {
         ...headers,
-        "x-hasura-admin-secret": "3LcJH8gT4sZkYVnfpqkDwY130m4S2G",
+        "Authorization": `Bearer ${token}`,
       },
     };
   });
@@ -157,6 +159,6 @@ export const resetClient = () => {
     cache: new InMemoryCache({}),
   });
 
-  return clientNew
-}
+  return clientNew;
+};
 export default client;
