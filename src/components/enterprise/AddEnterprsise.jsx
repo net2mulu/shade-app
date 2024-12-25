@@ -15,6 +15,7 @@ import { transformObject } from "../../utils/methods/transferData";
 import { boolOptions } from "../../utils/data";
 import { Button } from "@headlessui/react";
 import { ClipLoader } from "react-spinners";
+import { customHandleError } from "../../utils/methods/handleError";
 
 const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
   const {
@@ -75,8 +76,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
         setIsOpen(false);
       },
       onError: (err) => {
-        console.error(err);
-        toast.error("Failed to add enterprise. Please try again.");
+        customHandleError(err, toast);
       },
       client: updatedClient,
     }
@@ -91,8 +91,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
         setIsOpen(false);
       },
       onError: (err) => {
-        console.error(err);
-        toast.error("Failed to update enterprise. Please try again.");
+        customHandleError(err, toast);
       },
       client: updatedClient,
     }

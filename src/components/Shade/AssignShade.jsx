@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { Button } from "@headlessui/react";
 import { transformObject } from "../../utils/methods/transferData";
 import { ClipLoader } from "react-spinners";
+import { customHandleError } from "../../utils/methods/handleError";
 
 const AssignShade = ({ selectedShade, setIsOpen, refetch }) => {
   const {
@@ -27,8 +28,7 @@ const AssignShade = ({ selectedShade, setIsOpen, refetch }) => {
       setIsOpen(false);
     },
     onError: (err) => {
-      console.error(err);
-      toast.error("Failed to assign enterprise. Please try again.");
+      customHandleError(err, toast);
     },
     client: updatedClient,
   });

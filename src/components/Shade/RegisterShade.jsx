@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 import { transformObject } from "../../utils/methods/transferData";
 import { GET_SHEDS } from "../../apollo/shades/query";
 import { ClipLoader } from "react-spinners";
+import { customHandleError } from "../../utils/methods/handleError";
 
 function handleTheme(theme) {
   return {
@@ -162,8 +163,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
       setIsOpen(false);
     },
     onError: (err) => {
-      console.error(err);
-      toast.error("Failed to new shed. Please try again.");
+      customHandleError(err, toast);
     },
     refetchQueries: [
       {
@@ -181,8 +181,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
       setIsOpen(false);
     },
     onError: (err) => {
-      console.error(err);
-      toast.error("Failed to update shed. Please try again.");
+      customHandleError(err, toast);
     },
     refetchQueries: [
       {
@@ -1341,7 +1340,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             <Controller
               name="construction_stopped_reason_id"
               control={control}
-           
               rules={{
                 required:
                   selectedConstructionLevel?.label.toLowerCase() === "stopped"
@@ -1410,7 +1408,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                     ? "Reason is required"
                     : false,
               }}
-              
               render={({ field }) => (
                 <Select
                   {...field}
@@ -1486,7 +1483,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             type="submit"
             className="inline-flex items-center gap-2 w-32 justify-center rounded-md bg-[#3170B5] py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
           >
-            {(loadingSubmit || loadingEditSubmit) ? (
+            {loadingSubmit || loadingEditSubmit ? (
               <ClipLoader
                 color={"white"}
                 loading={true}

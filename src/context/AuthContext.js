@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SIGN_IN } from "../apollo/mutations";
 import { GET_USER } from "../apollo/queries";
+import { customHandleError } from "../utils/methods/handleError";
 
 export const AuthContext = createContext();
 
@@ -12,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   // apollo graphql queries
-  const [signIn, { loading: sign_in_loading }] = useMutation(SIGN_IN, {
+  const [signIn, { loading: sign_in_loading, error }] = useMutation(SIGN_IN, {
     fetchPolicy: "network-only",
   });
 
@@ -33,7 +34,10 @@ export const AuthProvider = ({ children }) => {
           signInResponse?.tokens?.access_token
         );
         localStorage.setItem("user_id", signInResponse?.data?.id);
-        localStorage.setItem("shed_user_data", JSON.stringify(signInResponse?.data));
+        localStorage.setItem(
+          "shed_user_data",
+          JSON.stringify(signInResponse?.data)
+        );
 
         if (searchParams) {
           navigate(searchParams);
@@ -42,11 +46,7 @@ export const AuthProvider = ({ children }) => {
         }
       },
       onError(err) {
-        if (err.message === "INVALID_CREDENTIALS") {
-          toast.error("Incorrect email or password!");
-        } else {
-          toast.error("Something went wrong");
-        }
+        customHandleError(err, toast);
       },
     });
   };
