@@ -8,3 +8,12 @@ services:
       context: .
     ports:
       - "23123:3000"
+    networks:
+      enterprise_frontend_net:
+
+
+networks:
+  enterprise_frontend_net:
+    ipam:
+      config:
+        - subnet: 172.210.0.0/16
