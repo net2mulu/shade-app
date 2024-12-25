@@ -20,4 +20,4 @@ deploy-job-staging:
     - lmis-runner-server07
   script:       
     - mv .env.stg .env        
-    - docker-compose -f docker-compose-staging up -d --build 
+    - docker-compose -f docker-compose-staging.yml up -d --build 
