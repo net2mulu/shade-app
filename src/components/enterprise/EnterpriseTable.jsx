@@ -6,18 +6,24 @@ import {
 } from "@tanstack/react-table";
 import React, { useState } from "react";
 import TableLoader from "../loader/tableLoader";
-import { getColumns } from "../../utils/cols/shadeCols";
-import EmptyTable from "./EmptyTable"
+import EmptyTable from "../../components/Shade/EmptyTable";
+import { getColumns } from "../../utils/cols/enterpriseCols";
 
-const ShadeTable = ({ isLoading, shadsList, tabStatus, setIsOpenAssignModal, setSelectedShade, setIsOpenEditModal, setIsView }) => {
+const EnterpriseTable = ({
+  isLoading,
+  enterpriseList,
+  setIsOpenEditModal,
+  setSelectedEnterpise,
+  setIsView,
+}) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const columns = getColumns(tabStatus, setIsOpenAssignModal, setSelectedShade, setIsOpenEditModal, setIsView);
+  const columns = getColumns(setIsOpenEditModal, setSelectedEnterpise, setIsView);
   const table = useReactTable({
-    data: shadsList?.enterprise_sheds ?? [],
+    data: enterpriseList?.enterprise_enterprises ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -56,14 +62,14 @@ const ShadeTable = ({ isLoading, shadsList, tabStatus, setIsOpenAssignModal, set
         {isLoading && <TableLoader colLength={columns.length} />}
 
         {!isLoading &&
-          shadsList?.enterprise_sheds &&
-          shadsList?.enterprise_sheds.length === 0 && (
+          enterpriseList?.enterprise_enterprises &&
+          enterpriseList?.enterprise_enterprises.length === 0 && (
             <EmptyTable message={"No items found"} colLength={columns.length} />
           )}
 
         {!isLoading &&
-          shadsList?.enterprise_sheds &&
-          shadsList?.enterprise_sheds.length > 0 && (
+          enterpriseList?.enterprise_enterprises &&
+          enterpriseList?.enterprise_enterprises.length > 0 && (
             <tbody>
               {table.getRowModel().rows.map((row, index) => (
                 <tr
@@ -90,4 +96,4 @@ const ShadeTable = ({ isLoading, shadsList, tabStatus, setIsOpenAssignModal, set
   );
 };
 
-export default ShadeTable;
+export default EnterpriseTable;

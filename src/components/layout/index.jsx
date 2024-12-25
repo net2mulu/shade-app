@@ -8,7 +8,7 @@ const MainLayout = ({ children }) => {
       <SideBar />
       <div className="flex flex-col w-[85vw] 2xl:w-[87vw] h-screen">
         <NavBar />
-        <div className="flex flex-col calc-height overflow-auto">
+        <div className="flex flex-col overflow-auto">
           {children}
         </div>
       </div>

@@ -1,40 +1,108 @@
-import React, { useState, useContext, useMemo } from "react";
-import ReactPaginate from "react-paginate";
+import React, { useState, useMemo } from "react";
 import ShadeFilterTab from "../../components/Shade/ShadeFilterTab";
 import ShadeTable from "../../components/Shade/ShadeTable";
-import { ShadeContext } from "../../context/ShadeContext";
 
-import AddShade from "../../components/modals/shade/addShades";
 import { useQuery } from "@apollo/client";
-import { GET_SHEDS } from "../../apollo/shades/query";
+import {
+  GET_ASSIGNED_SHEDS,
+  GET_SHEDS,
+  GET_UNASSIGNED_SHEDS,
+} from "../../apollo/shades/query";
 import { getTempClient } from "../../apollo/client";
+import TabButtons from "../../components/molecule/TabsButton";
+import Pagination from "../../components/molecule/Pagination";
+import ModalContainer from "../../components/modals/ModalContainer";
+import RegisterShade from "../../components/Shade/RegisterShade";
+import AssignShade from "../../components/Shade/AssignShade";
+import SearchInput from "../../components/molecule/TableSearch";
+export const TabStatusOptions = ["all", "created", "assigned"];
+
+export const getQuery = (selectedTab, searchText) => {
+  switch (selectedTab) {
+    case TabStatusOptions[1]:
+      return {
+        query: GET_UNASSIGNED_SHEDS,
+        where: searchText
+          ? {
+              _and: [
+                {
+                  assigned_sheds_aggregate: {
+                    count: { predicate: { _eq: 0 } },
+                  },
+                },
+                { block_no: { _ilike: "%" + searchText + "%" } },
+              ],
+            }
+          : {
+              assigned_sheds_aggregate: {
+                count: { predicate: { _eq: 0 } },
+              },
+            },
+      };
+
+    case TabStatusOptions[2]:
+      return {
+        query: GET_ASSIGNED_SHEDS,
+        where: searchText
+          ? {
+              _and: [
+                {
+                  assigned_sheds_aggregate: {
+                    count: { predicate: { _gt: 0 } },
+                  },
+                },
+                { block_no: { _ilike: "%" + searchText + "%" } },
+              ],
+            }
+          : {
+              assigned_sheds_aggregate: {
+                count: { predicate: { _gt: 0 } },
+              },
+            },
+      };
+
+    default:
+      return {
+        query: GET_SHEDS,
+        where: searchText
+          ? { block_no: { _ilike: "%" + searchText + "%" } }
+          : {},
+      };
+  }
+};
 
 const Shade = () => {
-  const { itemsPerPage, total, handlePageClick } = useContext(ShadeContext);
   const [isOpenRegisterModal, setIsOpennRegisterModal] = useState(false);
+  const [isOpenAssignModal, setIsOpenAssignModal] = useState(false);
+  const [isOpenEditModal, setIsOpenEditModal] = useState(false);
+  const [isView, setIsView] = useState(false);
+
+  const [selectedShade, setSelectedShade] = useState(null);
+  const [searchText, setSearchText] = useState(null);
+  const [tabStatus, setTabStatus] = useState(TabStatusOptions[0]);
 
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
+    perPage: 10,
+    currentPage: 0,
+    offset: 0,
   });
 
-  const client = useMemo(() => getTempClient(), [])
-  const { loading, error, data } = useQuery(GET_SHEDS, {
-    variables: {
-      limit: pagination.pageSize,
-    },
-    client: client,
-  });
-
-
+  const client = useMemo(() => getTempClient(), []);
+  const { loading, data, refetch } = useQuery(
+    getQuery(tabStatus, searchText).query,
+    {
+      variables: {
+        limit: pagination.perPage,
+        offset: pagination.offset,
+        where: getQuery(tabStatus, searchText).where,
+      },
+      client: client,
+    }
+  );
 
   return (
     <>
-      <AddShade
-        isOpenRegisterModal={isOpenRegisterModal}
-        setIsOpennRegisterModal={setIsOpennRegisterModal}
-      />
-      <div className="my-2 p-4 px-6 w-full flex flex-col justify-between h-full ">
+      <div className="my-2 p-4 px-6 w-full flex flex-col justify-between h-full">
         <div className="w-full flex flex-col gap-2">
           <>
             <div className="md:flex-row flex flex-col justify-between space-y-4 md:space-y-0 w-full items-center">
@@ -43,7 +111,7 @@ const Shade = () => {
                   List of Shades
                 </p>
                 <p className="text-xs text-[#9898A3] max-w-md">
-                  Here is the list of all the shades created without filters of
+                  Here is the list of all the shades created with filters of
                   assigned and expired shades.
                 </p>
               </div>
@@ -57,40 +125,93 @@ const Shade = () => {
             </div>
 
             <ShadeFilterTab />
-            <div className="w-full flex flex-col md:flex-row gap-4 justify-between md:items-center">
-              <div className="w-full gap-4 h-[60vh]  py-1 pb-3 relative rounded-lg">
+            <TabButtons
+              options={TabStatusOptions}
+              status={tabStatus}
+              setStatus={setTabStatus}
+            />
+            <article className="w-full flex flex-col md:flex-row gap-4 justify-between md:items-center">
+              <section className="bg-white w-full gap-4 h-[62vh] py-2 overflow-y-scroll pb-3 relative rounded-lg">
+                <div className="flex justify-end items-center">
+                  <SearchInput
+                    searchQuery={searchText}
+                    setSearchQuery={setSearchText}
+                    placeholder="Search by block no"
+                  />
+                </div>
+
                 <ShadeTable
                   isLoading={loading}
                   shadsList={loading ? [] : data}
+                  tabStatus={tabStatus}
+                  setIsOpenAssignModal={setIsOpenAssignModal}
+                  setSelectedShade={setSelectedShade}
+                  setIsOpenEditModal={setIsOpenEditModal}
+                  setIsView={setIsView}
                 />
-              </div>
-            </div>
+              </section>
+            </article>
           </>
         </div>
-        <div className="flex justify-center items-end md:justify-end">
-          {
-            <ReactPaginate
-              renderOnZeroPageCount={false}
-              breakLabel="..."
-              breakClassName="bg-white font-bold text-center border border-white rounded-md px-3 py-1"
-              nextLabel="Next >"
-              nextClassName="border border-[#3170B5]  space-x-2 items-center  flex text-[#3170B5] px-4 py-1 ml-2"
-              // onPageChange={handlePageClick}
-              onPageChange={handlePageClick}
-              pageRangeDisplayed={5}
-              pageCount={Math.ceil(total / itemsPerPage)}
-              previousLabel="< Previous"
-              previousClassName="border border-[#3170B5]  space-x-2 items-center  flex text-[#3170B5] px-4 py-1 mr-2"
-              containerClassName=""
-              className="flex justify-center text-[#3170B5]  items-end md:justify-end  mr-5 mb-4"
-              pageLinkClassName="px-3 py-2 "
-              pageClassName="bg-[#3170B5] py-1 rounded-md border border-[#005656] mx-1"
-              activeLinkClassName="text-white w-full rounded-md px-2 text-[#3170B5]"
-              activeClassName="text-[#3170B5] text-white"
-            />
-          }
-        </div>
       </div>
+      <Pagination
+        loading={loading}
+        pagination={pagination}
+        setPagination={setPagination}
+        totalPages={
+          loading ? 0 : data?.enterprise_sheds_aggregate?.aggregate?.count
+        }
+        refetch={refetch}
+      />
+
+      <ModalContainer
+        isOpen={isOpenRegisterModal}
+        setIsOpen={setIsOpennRegisterModal}
+        refetch={refetch}
+        title="Register Shade"
+        afterClose={() => setSelectedShade(null)}
+      >
+        <RegisterShade
+          setIsOpen={setIsOpennRegisterModal}
+          refetch={refetch}
+          selectedShade={null}
+        />
+      </ModalContainer>
+
+      <ModalContainer
+        isOpen={isOpenEditModal}
+        setIsOpen={setIsOpenEditModal}
+        refetch={refetch}
+        title={isView ? "Shade Info" : "Edit Shade"}
+        afterClose={() => {
+          setIsView(false);
+          setSelectedShade(null);
+        }}
+      >
+        <RegisterShade
+          setIsOpen={setIsOpenEditModal}
+          refetch={refetch}
+          selectedShade={selectedShade}
+          isView={isView}
+        />
+      </ModalContainer>
+
+      <ModalContainer
+        isOpen={isOpenAssignModal}
+        setIsOpen={setIsOpenAssignModal}
+        refetch={refetch}
+        title="Assign Shades for Enterprises"
+        afterClose={() => {
+          setIsView(false);
+          setSelectedShade(null);
+        }}
+      >
+        <AssignShade
+          selectedShade={selectedShade}
+          setIsOpen={setIsOpenAssignModal}
+          refetch={refetch}
+        />
+      </ModalContainer>
     </>
   );
 };

@@ -4,10 +4,9 @@ function RegisteredShadeTypes() {
   const data = {
     totalEnterprises: 2651,
     shadeTypes: [
-      { color: "#15D1A4", name: "PLC", percentage: "50%" },
-      { color: "#F8D8AB", name: "Union", percentage: "20%" },
-      { color: "#B7DFED", name: "Private", percentage: "20%" },
-      { color: "#DDCBFC", name: "Stock", percentage: "10%" },
+      { name: "PLC", percentage: "30%" },
+      { name: "Union", percentage: "40%" },
+      { name: "Union", percentage: "30%" },
     ],
   };
 

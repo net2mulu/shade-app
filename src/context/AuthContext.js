@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SIGN_IN } from "../apollo/mutations";
 import { GET_USER } from "../apollo/queries";
+import { customHandleError } from "../utils/methods/handleError";
 
 export const AuthContext = createContext();
 
@@ -12,19 +13,9 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   // apollo graphql queries
-  const [signIn, { loading: sign_in_loading }] = useMutation(SIGN_IN, {
+  const [signIn, { loading: sign_in_loading, error }] = useMutation(SIGN_IN, {
     fetchPolicy: "network-only",
   });
-
-  const [getUser, { data: user_data, loading: user_data_loading }] =
-    useLazyQuery(GET_USER, {
-      fetchPolicy: "network-only",
-      context: {
-        headers: {
-          "x-hasura-role": "user",
-        },
-      },
-    });
 
   const signInFunc = (phoneNumber, password) => {
     const searchParams = new URLSearchParams(search).get("redirectTo");
@@ -43,37 +34,19 @@ export const AuthProvider = ({ children }) => {
           signInResponse?.tokens?.access_token
         );
         localStorage.setItem("user_id", signInResponse?.data?.id);
+        localStorage.setItem(
+          "shed_user_data",
+          JSON.stringify(signInResponse?.data)
+        );
 
-        getUser({
-          variables: {
-            where: {
-              registration_id: {
-                _eq: signInResponse?.data?.id,
-              },
-            },
-          },
-          onCompleted(data) {
-            if (searchParams) {
-              navigate(searchParams);
-            } else {
-              navigate("/dashboard");
-            }
-          },
-          onError(err) {
-            console.log(err);
-            logOut();
-            toast.error("You are not authorized to access this page");
-            toast.error(err.message);
-          },
-        });
+        if (searchParams) {
+          navigate(searchParams);
+        } else {
+          navigate("/dashboard");
+        }
       },
       onError(err) {
-        console.log(err);
-        if (err.message === "INVALID_CREDENTIALS") {
-          toast.error("Incorrect email or password!");
-        } else {
-          toast.error("Something went wrong");
-        }
+        customHandleError(err, toast);
       },
     });
   };
@@ -83,28 +56,12 @@ export const AuthProvider = ({ children }) => {
     navigate("/");
   };
 
-  useEffect(() => {
-    if (localStorage.getItem("user_id")) {
-      getUser({
-        variables: {
-          where: {
-            registration_id: {
-              _eq: localStorage.getItem("user_id"),
-            },
-          },
-        },
-      });
-    }
-  }, [getUser]);
-
   return (
     <AuthContext.Provider
       value={{
         signInFunc,
         logOut,
         sign_in_loading,
-        user_data_loading,
-        user_data,
       }}
     >
       {children}
