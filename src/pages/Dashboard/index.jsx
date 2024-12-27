@@ -1,18 +1,11 @@
-import Map from "../../assets/svg/addisAbabaMap.svg";
-// import DashLineChart from "../../components/Dashboard/LineChart";
-import TestChart from "../../components/Dashboard/TestChart";
 import BarStacked from "../../components/Dashboard/StackedBar";
 import RegisteredShadeTypes from "../../components/Dashboard/RegisterdAhadeTypes";
 import ShadesCountBox from "../../components/Dashboard/ShadesCountBox";
 import RecentAddedShades from "../../components/Dashboard/RecentAddedShades";
 import RecentlyAssignedEnterprises from "../../components/Dashboard/RecentlyAssignedEnterprises";
+import ShadeStatus from "../../components/Dashboard/ShadeStatus";
+import AssignedByMonth from "../../components/Dashboard/AssignedByMonth";
 
-const cardList = [
-  { color: "bg-[#0EB01D]", val: 1 },
-  { color: "bg-[#FAAB3C]", val: 2 },
-  { color: "bg-[#1F74EC]", val: 3 },
-  { color: "bg-[#4E1BD9]", val: 4 },
-];
 const Dashboard = () => {
   return (
     <>
@@ -49,33 +42,11 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 h-full col-span-1 bg-white rounded-lg p-4 justify-between text-[#7E92A2]">
-            <p className="font-medium text-[#1A1A1A]">
-              Enterprises located in the sub-city
-            </p>
-            <img
-              src={Map}
-              alt="Addis Ababa Map"
-              className="w-3/5 place-self-center"
-            />
-            <div className="grid grid-cols-4 px-4 gap-4 items-center">
-              {cardList.map((_, id) => (
-                <div key={id} className="flex items-center gap-1">
-                  <div className="h-2 w-2 rounded-full bg-red-300"></div>
-                  <p className="text-[10px]">Lemi Kura</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ShadeStatus />
         </div>
         <div className="grid grid-cols-4 gap-4 h-max  w-full">
           <RegisteredShadeTypes />
-          <div className="flex flex-col h-full col-span-2 bg-white rounded-lg p-4">
-            <p className="font-medium  text-[#1A1A1A]">
-              Assigned number of shade per month
-            </p>
-            <TestChart />
-          </div>
+          <AssignedByMonth />
         </div>
         <div className="grid grid-cols-4 gap-4 h-max pb-4  w-full">
           <RecentAddedShades />

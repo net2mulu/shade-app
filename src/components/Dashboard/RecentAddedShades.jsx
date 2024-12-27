@@ -21,7 +21,7 @@ const RecentAddedShades = () => {
     );
   }
   return (
-    <section className="flex flex-col h-full min-h-[25vh] col-span-3 bg-white rounded-lg p-4">
+    <section className="flex flex-col h-full min-h-[35vh] col-span-3 bg-white rounded-lg p-4">
       <p className="font-medium  text-[#1A1A1A]">Recently Added Shades</p>
       <ShadeTable
         isLoading={loading}

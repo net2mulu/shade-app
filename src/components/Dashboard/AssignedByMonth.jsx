@@ -1,62 +1,91 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Chart } from "react-charts";
 
-export default function TestChart() {
-  const [{ activeSeriesIndex, activeDatumIndex }, setState] = React.useState({
+import { gql, useQuery } from "@apollo/client";
+import { generatePastMonths } from "../../utils/methods/dateConverter";
+import { getTempClient } from "../../apollo/client";
+
+const createDynamicQuery = () => {
+  const months = generatePastMonths(10);
+  const queries = months.map(
+    ({ start_date, end_date, label }, index) => `
+    ${label}: enterprise_assigned_sheds_aggregate(
+      where: { assigned_at: { _gte: "${start_date}", _lt: "${end_date}" } }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  `
+  );
+  return gql`
+    query GetAssignedShedsByMonth {
+      ${queries.join("\n")}
+    }
+  `;
+};
+
+const AssignedByMonth = () => {
+  const [{ activeSeriesIndex, activeDatumIndex }, setState] = useState({
     activeSeriesIndex: -1,
     activeDatumIndex: -1,
   });
 
+  const client = useMemo(() => getTempClient(), []);
+
+  const { loading, error, data } = useQuery(createDynamicQuery(), {
+    client,
+  });
+
+  if (loading || error) {
+    return (
+      <article className="flex flex-col h-full col-span-2 bg-white rounded-lg p-4 animate-pulse" />
+
+    );
+  }
+
+  console.log(data);
+
   return (
-    <div>
+    <article className="flex flex-col h-full col-span-2 bg-white rounded-lg p-4">
+      <p className="font-medium  text-[#1A1A1A] capitalize">
+        Assigned number of shade per month
+      </p>
       <MyChart
         elementType="line"
         setState={setState}
         activeDatumIndex={activeDatumIndex}
         activeSeriesIndex={activeSeriesIndex}
+        fetchedShedData={data}
       />
-    </div>
+    </article>
   );
-}
+};
 
 function MyChart({
   elementType,
   activeDatumIndex,
   activeSeriesIndex,
   setState,
+  fetchedShedData
 }) {
-  const data = [
-    {
-      label: "Given shades",
-      data: [
-        { primary: "Jan", secondary: 53000, radius: undefined },
-        { primary: "Feb", secondary: 64000, radius: undefined },
-        { primary: "Mar", secondary: 30000, radius: undefined },
-        { primary: "Apr", secondary: 67000, radius: undefined },
-        { primary: "May", secondary: 82000, radius: undefined },
-        { primary: "Jun", secondary: 88000, radius: undefined },
-        { primary: "Jul", secondary: 5000, radius: undefined },
-        { primary: "Aug", secondary: 9000, radius: undefined },
-        { primary: "Sep", secondary: 36000, radius: undefined },
-        { primary: "Oct", secondary: 48000, radius: undefined },
-      ],
-    },
-    {
-      label: "Expired Shades",
-      data: [
-        { primary: "Jan", secondary: 55000, radius: undefined },
-        { primary: "Feb", secondary: 66000, radius: undefined },
-        { primary: "Mar", secondary: 12000, radius: undefined },
-        { primary: "Apr", secondary: 24000, radius: undefined },
-        { primary: "May", secondary: 39000, radius: undefined },
-        { primary: "Jun", secondary: 76000, radius: undefined },
-        { primary: "Jul", secondary: 84000, radius: undefined },
-        { primary: "Aug", secondary: 52000, radius: undefined },
-        { primary: "Sep", secondary: 0, radius: undefined },
-        { primary: "Oct", secondary: 40000, radius: undefined },
-      ],
-    },
-  ];
+  const prepareChartData = (shedDatas) => {
+    const keys = Object.keys(shedDatas);
+    const newShedData = [];
+
+    keys.forEach((key) => {
+      newShedData.push({
+        primary: key,
+        secondary: shedDatas[key].aggregate.count,
+        radius: undefined,
+      });
+    });
+
+    return [{ label: "Given shades", data: newShedData }];
+  };
+
+  const SHEDS_DATA = useMemo(() => prepareChartData(fetchedShedData), [fetchedShedData]);
+
 
   const primaryAxis = React.useMemo(
     () => ({
@@ -74,7 +103,7 @@ function MyChart({
     ],
     [elementType]
   );
-
+  createDynamicQuery();
   return (
     <>
       <br />
@@ -82,7 +111,7 @@ function MyChart({
       <div className="w-full h-[250px]">
         <Chart
           options={{
-            data,
+            data: SHEDS_DATA,
             primaryAxis,
             secondaryAxes,
             getDatumStyle: (datum, status) =>
@@ -181,3 +210,5 @@ function MyChart({
     </>
   );
 }
+
+export default AssignedByMonth;

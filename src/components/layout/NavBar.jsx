@@ -29,7 +29,7 @@ const NavBar = () => {
                 <div className="hidden lg:block">
                   <div className="flex flex-col justify-end items-end text-[#3170B5]">
                     <span className="font-semibold ">{userData?.phoneNumber}</span>
-                    <p className="text-xs block self-end">Email: {userData?.email}</p>
+                    <p className="text-xs block self-end">{userData?.email}</p>
                   </div>
                 </div>
 

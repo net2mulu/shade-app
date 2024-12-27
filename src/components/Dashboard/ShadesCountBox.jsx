@@ -29,6 +29,7 @@ const ShadesCountBox = () => {
       </article>
     );
   }
+  
 
 
   return (
@@ -69,14 +70,14 @@ const ShadesCountBox = () => {
         </div>
       </section>
       <section className="flex justify-center items-center gap-4 bg-white rounded-lg p-4">
-        <div className={`w-3 h-24 bg-[#4E1BD9] rounded-lg`}></div>
+        <div className={`w-4 h-24 bg-[#4E1BD9] rounded-lg`}></div>
         <div className="h-full  flex flex-col justify-center gap-2">
           <p className="text-2xl font-bold text-[#19497D]">
-            {data?.underConstructionsShade?.aggregate?.count}
+            {data?.completedConstructionsCount?.aggregate?.count}
           </p>
 
           <p className=" text-[#959595] font-poppins text-sm font-medium">
-            Total Shades Under Construction
+            Total Construction Completed
           </p>
         </div>
       </section>

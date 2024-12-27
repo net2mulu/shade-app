@@ -28,7 +28,7 @@ const RecentlyAssignedEnterprises = () => {
         <section index={shed.shed.id + "recently-assigned"} className="flex justify-between items-start mt-6" >
           <div className="">
             <p className="text-sm line-clamp-1">{shed.shed.name.en}</p>
-            <p className="text-xs text-gray-400 uppercase">{convertTime(shed.created_at) + " , " + formatDateString(shed.created_at)}</p>
+            <p className="text-[9px] text-gray-300 uppercase font-semibold">{convertTime(shed.created_at) + " , " + formatDateString(shed.created_at)}</p>
           </div>
           <p className="bg-[#B7DFED] rounded-full leading-4 max-w-[100px]  py-[0.4rem] px-4 flex justify-center items-center text-xs text-[#626262] font-medium capitalize">{shed.shed.city.namejson.en}</p>
         </section>
