@@ -1,57 +1,147 @@
-import React from "react";
+import { gql, useQuery } from "@apollo/client";
+import React, { useMemo } from "react";
+import { GET_SHED_TYPES } from "../../apollo/base_data/query";
+import { getTempClient } from "../../apollo/client";
+const bgcolors = [
+  "#15D1A4",
+  "#F8D8AB",
+  "#B7DFED",
+  "#DDCBFC",
+  "#D56D6D",
+  "#1F74EC",
+  "#FB8D8D",
+  "#64748B"
+];
 
-function RegisteredShadeTypes() {
-  const data = {
-    totalEnterprises: 2651,
-    shadeTypes: [
-      { name: "PLC", percentage: "30%" },
-      { name: "Union", percentage: "40%" },
-      { name: "Union", percentage: "30%" },
-    ],
+const getDynamicAggrigateQuery = (shedTypes) => {
+  const queries = shedTypes.map(
+    (shed) => `
+      ${shed.name_json.en}: enterprise_sheds_aggregate(where: {shed_type_id: {_eq: "${shed.id}"}}) {
+        aggregate {
+          count
+        }
+      }
+    `
+  );
+  queries.push(`
+      total: enterprise_sheds_aggregate{
+        aggregate {
+          count
+        }
+      }
+      `);
+  return gql`
+  query ShedTypeAggregates {
+    ${queries.join("\n")}
+  }
+`;
+};
+
+const calculatePercentage = (aggrigatesData) => {
+  const keys = Object.keys(aggrigatesData);
+  const shadeTypes = [];
+
+  keys.forEach((key) => {
+    if (key === "total") return;
+    const percentage =
+      (aggrigatesData[key].aggregate.count /
+        aggrigatesData.total.aggregate.count) *
+      100;
+    shadeTypes.push({
+      name: key,
+      percentage: `${percentage.toFixed(1)}%`,
+      color: bgcolors[Math.floor(Math.random() * 6)] ?? bgcolors[0],
+    });
+  });
+
+  return {
+    totalEnterprises: aggrigatesData.total.aggregate.count,
+    shadeTypes,
   };
+};
+
+const RegisteredShadeTypes = () => {
+  const client = useMemo(() => getTempClient(), []);
+
+  const {
+    loading: loadingSheds,
+    data: dataSheds,
+    error: errorSheds,
+  } = useQuery(GET_SHED_TYPES, {
+    client: client,
+  });
+  const {
+    loading: loadingAggrigate,
+    data: dataAggrigate,
+    error: errorAggrigate,
+  } = useQuery(
+    dataSheds && dataSheds.base_shed_types
+      ? getDynamicAggrigateQuery(dataSheds?.base_shed_types)
+      : GET_SHED_TYPES,
+    {
+      client: client,
+      skip: loadingSheds || errorSheds ? true : false,
+    }
+  );
+
+  if (loadingSheds || loadingAggrigate || errorSheds || errorAggrigate) {
+    return (
+      <section className="flex flex-col h-full animate-pulse col-span-2 bg-white rounded-lg p-4" />
+    );
+  }
+  const ViewData = calculatePercentage(dataAggrigate);
 
   return (
-    <div className="w-full  mt-12">
-      <div className="flex items-center mx-2 mb-4">
-        <span className="text-[#1A1A1A] text-3xl font-bold mr-2">
-          {data.totalEnterprises}
-        </span>
-        <span className="text-gray-500">Enterprises</span>
-      </div>
-      <div className="w-full  justify-between flex items-center">
-        {data.shadeTypes.map((shadeType, i) => (
-          <div
-            key={i}
-            className={`flex flex-col gap-8  items-start justify-center`}
-            style={{
-              width: shadeType.percentage,
-              zIndex: data.shadeTypes.length - i,
-            }}
-          >
+    <section className="flex flex-col h-full col-span-2 bg-white rounded-lg p-4">
+      <p className="font-medium  text-[#1A1A1A]">Registered Shade Types</p>
+      <div className="w-full  mt-12">
+        <div className="flex items-center mx-2 mb-4">
+          <span className="text-[#1A1A1A] text-3xl font-bold mr-2">
+            {ViewData.totalEnterprises}
+          </span>
+          <span className="text-gray-500">Enterprises</span>
+        </div>
+        <div className="w-full  justify-between flex items-center">
+          {ViewData.shadeTypes.map((shadeType, i) => (
             <div
-              className={`w-[110%]  h-8 rounded-full bg-[${shadeType.color}] border-x-4 border-y-2 border-white `}
-            />
-            <div
-              className={`text-[#959595] flex flex-col ${
-                i !== 0 && "ml-[10%]"
-              }`}
+              key={i}
+              className={`flex flex-col gap-8  items-start justify-center`}
+              style={{
+                width: shadeType.percentage,
+                zIndex: ViewData.shadeTypes.length - i,
+              }}
             >
-              <div className="flex items-center justify-start gap-4">
-                <div
-                  className={`w-2 h-2  bg-[${shadeType.color}] rounded-full`}
-                ></div>
+              <div
+                className={`w-[110%]  h-8 rounded-full border-x-4 border-y-2 border-white `}
+                style={{
+                  backgroundColor: shadeType.color,
+                }}
+              />
+              <div
+                className={`text-[#959595] flex flex-col ${
+                  i !== 0 && "ml-[10%]"
+                }`}
+              >
+                <div className="flex items-center justify-start gap-4">
+                  <div
+                    className={`w-2 h-2 rounded-full`}
+                    style={{
+                      backgroundColor: shadeType.color,
+                    }}
+                  />
 
-                <span className="text-lg font-bold">
-                  {shadeType.percentage}
-                </span>
+                  <span className="text-lg font-bold">
+                    {shadeType.percentage}
+                  </span>
+                </div>
+                <span className="ml-6 text-gray-500">{shadeType.name}</span>
               </div>
-              <span className="ml-6 text-gray-500">{shadeType.name}</span>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
-}
+};
 
 export default RegisteredShadeTypes;

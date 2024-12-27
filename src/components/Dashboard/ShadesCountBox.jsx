@@ -30,7 +30,7 @@ const ShadesCountBox = () => {
     );
   }
 
-  console.log(data);
+
   return (
     <article className="grid col-span-1 grid-cols-2 gap-4 h-full w-full">
       <section className="flex justify-center items-center gap-4 bg-white rounded-lg p-4">

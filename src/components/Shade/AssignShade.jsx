@@ -46,13 +46,15 @@ const AssignShade = ({ selectedShade, setIsOpen, refetch }) => {
   }
 
   const onSubmit = async (data) => {
+    const userId = localStorage.getItem("user_id") ?? null;
+
     if (selectedShade) {
       try {
         await assignShed({
           variables: {
             ...transformObject(data),
             shed_id: selectedShade.id,
-            assigned_by_id: "00000000-0000-0000-0000-000000000000",
+            assigned_by_id:  userId ?? "00000000-0000-0000-0000-000000000000",
           },
         });
       } catch (error) {

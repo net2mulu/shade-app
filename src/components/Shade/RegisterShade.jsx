@@ -357,6 +357,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
 
   const onSubmit = async (data) => {
     const parsedData = transformObject(data);
+    const userId = localStorage.getItem("user_id") ?? null;
 
     const leftFields = {};
 
@@ -378,7 +379,8 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
     }
 
     if (!data?.created_by_id) {
-      leftFields["created_by_id"] = "00000000-0000-0000-0000-000000000000";
+      leftFields["created_by_id"] =
+        userId ?? "00000000-0000-0000-0000-000000000000";
     }
 
     try {
