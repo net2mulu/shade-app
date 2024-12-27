@@ -397,6 +397,22 @@ export const GET_ENTERPRISES = gql`
   }
 `;
 
+export const GET_ENTERPRISES_ASSIGNED_SHEDS = gql`
+  query GetAssignedSheds {
+    enterprise_assigned_sheds(order_by: {assigned_at: desc}, limit: 5) {
+      assigned_at
+      shed {
+        id
+        name
+        city {
+          namejson
+        }
+      }
+      created_at
+    }
+  }
+`;
+
 export const GET_ORGANIZATIONS = gql`
   query GetEnterprises {
     organization_namespace {
@@ -429,10 +445,11 @@ export const GET_COMBINED_SHED_COUNT = gql`
         count
       }
     }
-    underConstructionsShade: enterprise_sheds_aggregate(where: {construction_status: {_eq: "100"}}) {
+    underConstructionsShade: enterprise_sheds_aggregate(
+      where: { construction_status: { _eq: "100" } }
+    ) {
       aggregate {
         count
-
       }
     }
   }

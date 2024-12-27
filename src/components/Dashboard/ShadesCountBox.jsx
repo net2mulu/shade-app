@@ -53,7 +53,7 @@ const ShadesCountBox = () => {
           </p>
 
           <p className=" text-[#959595] font-poppins text-sm font-medium">
-            Total Open Shades
+            Total Unassigned Shades
           </p>
         </div>
       </section>
@@ -64,7 +64,7 @@ const ShadesCountBox = () => {
             {data?.assignedShedsCount?.aggregate?.count}
           </p>
           <p className=" text-[#959595] font-poppins text-sm font-medium">
-            Total Taken Shades
+            Total Assigned Shades
           </p>
         </div>
       </section>

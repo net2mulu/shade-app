@@ -48,8 +48,7 @@ const authLink = setContext((operation, { headers }) => {
     return {
       headers: {
         ...headers,
-        "x-hasura-role": "anonymous",
-        "x-real-ip": "123",
+      
       },
     };
   }

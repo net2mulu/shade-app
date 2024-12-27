@@ -5,6 +5,7 @@ import BarStacked from "../../components/Dashboard/StackedBar";
 import RegisteredShadeTypes from "../../components/Dashboard/RegisterdAhadeTypes";
 import ShadesCountBox from "../../components/Dashboard/ShadesCountBox";
 import RecentAddedShades from "../../components/Dashboard/RecentAddedShades";
+import RecentlyAssignedEnterprises from "../../components/Dashboard/RecentlyAssignedEnterprises";
 
 const cardList = [
   { color: "bg-[#0EB01D]", val: 1 },
@@ -68,25 +69,17 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="grid grid-cols-4 gap-4 h-max  w-full">
-        <RegisteredShadeTypes />
+          <RegisteredShadeTypes />
           <div className="flex flex-col h-full col-span-2 bg-white rounded-lg p-4">
             <p className="font-medium  text-[#1A1A1A]">
               Assigned number of shade per month
             </p>
-            {/* <DashLineChart /> */}
             <TestChart />
-            {/* <div className="h-[90%] bg-red-500 w-full flex flex-col justify-center items-center">
-        
-            </div> */}
           </div>
         </div>
         <div className="grid grid-cols-4 gap-4 h-max pb-4  w-full">
-         <RecentAddedShades />
-          <div className="flex flex-col h-full col-span-1 bg-white rounded-lg p-4">
-            <p className="font-medium  text-[#1A1A1A]">
-              Recently Assigned Enterprises
-            </p>
-          </div>
+          <RecentAddedShades />
+          <RecentlyAssignedEnterprises />
         </div>
       </div>
     </>
