@@ -1,7 +1,71 @@
-import ResizableBox from "./ResizableBox";
-import useDemoConfig from "./useDemoConfig";
-import React from "react";
+import React, { useMemo } from "react";
 import { Chart } from "react-charts";
+import { generatePastMonths } from "../../utils/methods/dateConverter";
+import { gql, useQuery } from "@apollo/client";
+import { getTempClient } from "../../apollo/client";
+import { GET_SHED_TYPES } from "../../apollo/base_data/query";
+import { getRandomColor } from "../../utils/methods/colorGenerator";
+
+const createDynamicQuery = (shedTypes) => {
+  const queryKeys = [];
+
+  if (shedTypes.length === 0) {
+    return { query: GET_SHED_TYPES, queryKeys };
+  }
+
+  const months = generatePastMonths(10);
+
+  const queries = [];
+
+  shedTypes.forEach((shedType) => {
+    const shedTypeKeys = [];
+
+    const shedTypeQuery = months.map(({ start_date, end_date, label }) => {
+      const key = shedType.name_json.en + "_" + label;
+      shedTypeKeys.push({ key, month: label });
+
+      return `
+    ${key}:  enterprise_sheds_aggregate(where: {_and: {created_at: { _gte:  "${start_date}", _lt: "${end_date}" }, shed_type: {id: {_eq: "${shedType.id}"}}}}) {
+    aggregate {
+      count
+    }
+  }
+  `;
+    });
+
+    queryKeys.push({
+      shedType: shedType.name_json.en,
+      keys: shedTypeKeys,
+    });
+    queries.push(...shedTypeQuery);
+  });
+
+  return {
+    query: gql`
+  query GetAssignedShedsByMonth {
+    ${queries.join("\n")}
+  }
+`,
+    queryKeys,
+  };
+};
+
+const getGraphData = (data, queryKeys) => {
+  const graphData = [];
+  queryKeys.forEach((queryKey) => {
+    graphData.push({
+      label: queryKey.shedType,
+      data: queryKey.keys.map((key) => {
+        return {
+          primary: key.month,
+          secondary: data[key.key].aggregate.count,
+        };
+      }),
+    });
+  });
+
+  return graphData;
+};
 
 const ShadeTypeByMonth = () => {
   const data = [
@@ -187,14 +251,14 @@ const ShadeTypeByMonth = () => {
     },
   ];
 
-  const primaryAxis = React.useMemo(
+  const primaryAxis = useMemo(
     () => ({
       getValue: (datum) => datum.primary,
     }),
     []
   );
 
-  const secondaryAxes = React.useMemo(
+  const secondaryAxes = useMemo(
     () => [
       {
         getValue: (datum) => datum.secondary,
@@ -204,39 +268,71 @@ const ShadeTypeByMonth = () => {
     []
   );
 
+  const client = useMemo(() => getTempClient(), []);
+
+  const {
+    loading: loadingShadeTypes,
+    error: errorShadeTypes,
+    data: dataShadeTypes,
+  } = useQuery(GET_SHED_TYPES, {
+    client,
+  });
+
+  const dynamicQuery = createDynamicQuery(
+    loadingShadeTypes ? [] : dataShadeTypes.base_shed_types
+  );
+
+  const {
+    loading: loadingMain,
+    error: errorMain,
+    data: dataMain,
+  } = useQuery(dynamicQuery.query, {
+    client,
+    skip: loadingShadeTypes,
+  });
+
+  if (loadingShadeTypes || loadingMain || errorShadeTypes || errorMain) {
+    return (
+      <article className="flex flex-col h-full w-full col-span-2 bg-white rounded-lg p-4 animate-pulse" />
+    );
+  }
+
+  const graphData = getGraphData(dataMain, dynamicQuery.queryKeys);
+  const colors = Array.from({
+    length: dataShadeTypes.base_shed_types.length,
+  }).map((_) => getRandomColor());
+  console.log(graphData, colors);
+
   return (
     <article className="flex flex-col h-full w-full col-span-2 bg-white rounded-lg p-4">
       <section className=" flex items-center justify-between gap-2">
-        <p className="font-medium text-[#1A1A1A]">Shades Type by Sub-city</p>
+        <p className="font-medium text-[#1A1A1A]">Shades Type By Month</p>
 
         <section className="flex items-center justify-center gap-6 text-[#7E92A2] text-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-[#15D1A4] rounded-full"></div>
-            <span className="">Union</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-[#F8D8AB] rounded-full"></div>
-            <span className="">Private</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-[#B7DFED] rounded-full"></div>
-            <span className="">Partnership</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-[#DDCBFC] rounded-full"></div>
-            <span className="">PLC</span>
-          </div>
+          {dataShadeTypes.base_shed_types.map((type, index) => (
+            <div
+              className="flex items-center gap-2"
+              key={type.name_json.en + index + "--shad-type-month"}
+            >
+              <div className="w-2 h-2 rounded-full capitalize"
+              style={{
+                backgroundColor: colors[index],
+              }} />
+              <span className="">{type.name_json.en}</span>
+            </div>
+          ))}
         </section>
       </section>
+
       <section className=" h-3/4 w-full">
         <br />
         <br />
         <Chart
           options={{
-            data,
+            data: graphData,
             primaryAxis,
             secondaryAxes,
-            defaultColors: ["#15D1A4", "#F8D8AB", "#B7DFED", "#DDCBFC"],
+            defaultColors: colors,
             barWidth: 1,
           }}
         />

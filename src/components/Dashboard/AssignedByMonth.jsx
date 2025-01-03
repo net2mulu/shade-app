@@ -44,7 +44,6 @@ const AssignedByMonth = () => {
     );
   }
 
-  console.log(data);
 
   return (
     <article className="flex flex-col h-full col-span-2 bg-white rounded-lg p-4">
