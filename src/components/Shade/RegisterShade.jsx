@@ -361,22 +361,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
 
     const leftFields = {};
 
-    if (!data?.shed_type_id) {
-      leftFields["shed_type_id"] = "47fc7455-aa4e-42ca-9079-774075f596f2";
-    }
-
-    if (!data?.number_of_floors_id) {
-      leftFields["number_of_floors_id"] =
-        "02e1cc4f-3a4f-423e-a02e-9d638400ad18";
-    }
-
-    if (!data?.construction_completed_date) {
-      leftFields["construction_completed_date"] = "2024-12-20";
-    }
-
-    if (!data?.construction_stopped_date) {
-      leftFields["construction_stopped_date"] = "2000-11-11";
-    }
 
     if (!data?.created_by_id) {
       leftFields["created_by_id"] =

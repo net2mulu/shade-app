@@ -3,7 +3,7 @@ import useDemoConfig from "./useDemoConfig";
 import React from "react";
 import { Chart } from "react-charts";
 
-export default function BarStacked() {
+const ShadeTypeByMonth = () => {
   const data = [
     {
       label: "union",
@@ -205,18 +205,44 @@ export default function BarStacked() {
   );
 
   return (
-    <>
-      <br />
-      <br />
-      <Chart
-        options={{
-          data,
-          primaryAxis,
-          secondaryAxes,
-          defaultColors: ["#15D1A4", "#F8D8AB", "#B7DFED", "#DDCBFC"],
-          barWidth: 1,
-        }}
-      />
-    </>
+    <article className="flex flex-col h-full w-full col-span-2 bg-white rounded-lg p-4">
+      <section className=" flex items-center justify-between gap-2">
+        <p className="font-medium text-[#1A1A1A]">Shades Type by Sub-city</p>
+
+        <section className="flex items-center justify-center gap-6 text-[#7E92A2] text-xs">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-[#15D1A4] rounded-full"></div>
+            <span className="">Union</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-[#F8D8AB] rounded-full"></div>
+            <span className="">Private</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-[#B7DFED] rounded-full"></div>
+            <span className="">Partnership</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-[#DDCBFC] rounded-full"></div>
+            <span className="">PLC</span>
+          </div>
+        </section>
+      </section>
+      <section className=" h-3/4 w-full">
+        <br />
+        <br />
+        <Chart
+          options={{
+            data,
+            primaryAxis,
+            secondaryAxes,
+            defaultColors: ["#15D1A4", "#F8D8AB", "#B7DFED", "#DDCBFC"],
+            barWidth: 1,
+          }}
+        />
+      </section>
+    </article>
   );
-}
+};
+
+export default ShadeTypeByMonth;
