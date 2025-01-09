@@ -937,7 +937,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           )}
         </div>
 
-        {/* Service Type */}
         <div className="flex flex-col">
           <label
             htmlFor="service_type_id"
@@ -981,6 +980,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           )}
         </div>
 
+{/* //remove-@ */}
         {selectedServiceType?.label.toLowerCase() === "shed" && (
           <div className="flex flex-col border p-4">
             <label
@@ -1031,7 +1031,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           </div>
         )}
 
-        {/* Built By */}
         <div className="flex flex-col">
           <label
             htmlFor="built_by_id"
@@ -1119,6 +1118,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           )}
         </div>
 
+{/* //remove-@ */}
         {selectedConstructionType?.label.toLowerCase() === "building" && (
           <div className="flex flex-col border p-4">
             <label
@@ -1212,7 +1212,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             </span>
           )}
         </div>
-
+{/* //remove-@ */}
         {selectedConstructionLevel?.label.toLowerCase() ===
           "under_construction" && (
           <div className="flex flex-col border p-4">
@@ -1252,7 +1252,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           </div>
         )}
 
-        {/* Construction Work Started Date */}
         <div className="flex flex-col">
           <label
             htmlFor="construction_work_started_date"
@@ -1279,6 +1278,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           )}
         </div>
 
+{/* //remove-@ */}
         {selectedConstructionLevel?.label.toLowerCase() === "finished" && (
           <div className="flex flex-col border p-4">
             <label
@@ -1313,6 +1313,8 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             )}
           </div>
         )}
+
+{/* //remove-@ */}
         {selectedConstructionLevel?.label.toLowerCase() === "stopped" && (
           <div className="flex flex-col border p-4">
             <label
@@ -1371,6 +1373,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           </div>
         )}
 
+{/* //remove-@ */}
         {selectedConstructionLevel?.label.toLowerCase() === "finished" && (
           <div className="flex flex-col border p-4">
             <label

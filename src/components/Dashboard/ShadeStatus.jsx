@@ -32,7 +32,6 @@ const ShadeStatus = () => {
     (data?.completed?.aggregate?.count +
       data?.stopped?.aggregate?.count);
 
-      console.log(data?.total?.aggregate?.count, data?.completed?.aggregate?.count, data?.stopped?.aggregate?.count , under_construction)
 
   const CHART_DATA = [
     ["Status", "Count"],

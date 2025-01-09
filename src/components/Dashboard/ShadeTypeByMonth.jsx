@@ -68,189 +68,6 @@ const getGraphData = (data, queryKeys) => {
 };
 
 const ShadeTypeByMonth = () => {
-  const data = [
-    {
-      label: "union",
-      data: [
-        {
-          primary: "Aug",
-          secondary: 53,
-        },
-        {
-          primary: "Sep",
-          secondary: 64,
-        },
-        {
-          primary: "Oct",
-          secondary: 69,
-        },
-        {
-          primary: "Nov",
-          secondary: 93,
-        },
-        {
-          primary: "Dec",
-          secondary: 81,
-        },
-        {
-          primary: "Jan",
-          secondary: 27,
-        },
-        {
-          primary: "Feb",
-          secondary: 71,
-        },
-        {
-          primary: "Mar",
-          secondary: 27,
-        },
-        {
-          primary: "Apr",
-          secondary: 96,
-        },
-        {
-          primary: "May",
-          secondary: 92,
-        },
-      ],
-    },
-    {
-      label: "Private",
-      data: [
-        {
-          primary: "Aug",
-          secondary: 53,
-        },
-        {
-          primary: "Sep",
-          secondary: 64,
-        },
-        {
-          primary: "Oct",
-          secondary: 69,
-        },
-        {
-          primary: "Nov",
-          secondary: 93,
-        },
-        {
-          primary: "Dec",
-          secondary: 81,
-        },
-        {
-          primary: "Jan",
-          secondary: 27,
-        },
-        {
-          primary: "Feb",
-          secondary: 71,
-        },
-        {
-          primary: "Mar",
-          secondary: 27,
-        },
-        {
-          primary: "Apr",
-          secondary: 96,
-        },
-        {
-          primary: "May",
-          secondary: 92,
-        },
-      ],
-    },
-    {
-      label: "Partnership",
-      data: [
-        {
-          primary: "Aug",
-          secondary: 53,
-        },
-        {
-          primary: "Sep",
-          secondary: 64,
-        },
-        {
-          primary: "Oct",
-          secondary: 69,
-        },
-        {
-          primary: "Nov",
-          secondary: 93,
-        },
-        {
-          primary: "Dec",
-          secondary: 81,
-        },
-        {
-          primary: "Jan",
-          secondary: 27,
-        },
-        {
-          primary: "Feb",
-          secondary: 71,
-        },
-        {
-          primary: "Mar",
-          secondary: 27,
-        },
-        {
-          primary: "Apr",
-          secondary: 96,
-        },
-        {
-          primary: "May",
-          secondary: 92,
-        },
-      ],
-    },
-    {
-      label: "PLC",
-      data: [
-        {
-          primary: "Aug",
-          secondary: 59,
-        },
-        {
-          primary: "Sep",
-          secondary: 14,
-        },
-        {
-          primary: "Oct",
-          secondary: 95,
-        },
-        {
-          primary: "Nov",
-          secondary: 82,
-        },
-        {
-          primary: "Dec",
-          secondary: 24,
-        },
-        {
-          primary: "Jan",
-          secondary: 58,
-        },
-        {
-          primary: "Feb",
-          secondary: 14,
-        },
-        {
-          primary: "Mar",
-          secondary: 65,
-        },
-        {
-          primary: "Apr",
-          secondary: 28,
-        },
-        {
-          primary: "May",
-          secondary: 30,
-        },
-      ],
-    },
-  ];
-
   const primaryAxis = useMemo(
     () => ({
       getValue: (datum) => datum.primary,
@@ -301,7 +118,6 @@ const ShadeTypeByMonth = () => {
   const colors = Array.from({
     length: dataShadeTypes.base_shed_types.length,
   }).map((_) => getRandomColor());
-  console.log(graphData, colors);
 
   return (
     <article className="flex flex-col h-full w-full col-span-2 bg-white rounded-lg p-4">
@@ -314,10 +130,12 @@ const ShadeTypeByMonth = () => {
               className="flex items-center gap-2"
               key={type.name_json.en + index + "--shad-type-month"}
             >
-              <div className="w-2 h-2 rounded-full capitalize"
-              style={{
-                backgroundColor: colors[index],
-              }} />
+              <div
+                className="w-2 h-2 rounded-full capitalize"
+                style={{
+                  backgroundColor: colors[index],
+                }}
+              />
               <span className="">{type.name_json.en}</span>
             </div>
           ))}
