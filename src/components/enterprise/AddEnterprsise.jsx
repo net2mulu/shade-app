@@ -20,6 +20,7 @@ import { customHandleError } from "../../utils/methods/handleError";
 const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
   const {
     register,
+    setValue,
     handleSubmit,
     control,
     watch,
@@ -129,6 +130,23 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
   };
 
   const selectedPurpose = watch("used_for_intended_purpose");
+
+  const transferredDate = watch("contract_transferred_time");
+
+  // Automatically calculate expiration date when the transferred date changes
+  const plusFiveYears = () => {
+    if (transferredDate) {
+      const transferDateObj = new Date(transferredDate);
+      const expirationDate = new Date(
+        transferDateObj.setFullYear(transferDateObj.getFullYear() + 5)
+      )
+        .toISOString()
+        .split("T")[0]; // Format date as YYYY-MM-DD
+      setValue("contract_expiration_time", expirationDate, {
+        shouldValidate: true,
+      });
+    }
+  };
 
   return (
     <form
@@ -287,6 +305,27 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
             {...register("contract_transferred_time", {
               required: "Transfer date is required",
+              validate: {
+                isNotFutureDate: (value) => {
+                  const today = new Date();
+                  const selectedDate = new Date(value);
+                  return (
+                    selectedDate <= today ||
+                    "Transfer date cannot be after today"
+                  );
+                },
+              },
+              onChange: (e) => {
+                const transferDateObj = new Date(e.target.value);
+                const expirationDate = new Date(
+                  transferDateObj.setFullYear(transferDateObj.getFullYear() + 5)
+                )
+                  .toISOString()
+                  .split("T")[0]; // Format date as YYYY-MM-DD
+                setValue("contract_expiration_time", expirationDate, {
+                  shouldValidate: true,
+                });
+              },
             })}
           />
           {errors.contract_transferred_time && (
@@ -296,30 +335,32 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
           )}
         </div>
 
-        <div className="flex flex-col">
-          <label
-            htmlFor="contract_expiration_time"
-            className="text-black text-base font-medium capitalize"
-          >
-            Contract expiration time <span className="text-red-400">*</span>
-          </label>
-          <span className="text-[#CBCBCB] text-sm">በውል የሚያበቃበት ጊዜ</span>
-          <input
-            name="contract_expiration_time"
-            type="date"
-            disabled={isView}
-            id="contract_expiration_time"
-            className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
-            {...register("contract_expiration_time", {
-              required: "Expiration date is required",
-            })}
-          />
-          {errors.contract_expiration_time && (
-            <span className="text-red-500 text-xs capitalize">
-              * {errors.contract_expiration_time.message}
-            </span>
-          )}
-        </div>
+        {transferredDate && !errors.contract_transferred_time && (
+          <div className="flex flex-col">
+            <label
+              htmlFor="contract_expiration_time"
+              className="text-black text-base font-medium capitalize"
+            >
+              Contract expiration time <span className="text-red-400">*</span>
+            </label>
+            <span className="text-[#CBCBCB] text-sm">በውል የሚያበቃበት ጊዜ</span>
+            <input
+              name="contract_expiration_time"
+              type="date"
+              disabled={true}
+              id="contract_expiration_time"
+              className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
+              {...register("contract_expiration_time", {
+                required: "Expiration date is required",
+              })}
+            />
+            {errors.contract_expiration_time && (
+              <span className="text-red-500 text-xs capitalize">
+                * {errors.contract_expiration_time.message}
+              </span>
+            )}
+          </div>
+        )}
 
         <div>
           <label
@@ -335,13 +376,13 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             id="young_male"
             disabled={isView}
             placeholder="Enter amount"
-            {...register(
-              "young_male",
-              selectedPurpose &&
-                selectedPurpose.value === false && {
-                  required: "Required",
-                }
-            )}
+            {...register("young_male", {
+              required: "Reason",
+              
+              validate: {
+                isPositive: (value) => value > 0 || "Must be a positive number",
+              },
+            })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
               errors.young_male ? "border-red-500" : "border-[#CED4DB]"
             }`}
@@ -367,13 +408,13 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             id="young_female"
             disabled={isView}
             placeholder="Enter amount"
-            {...register(
-              "young_female",
-              selectedPurpose &&
-                selectedPurpose.value === false && {
-                  required: "Required",
-                }
-            )}
+            {...register("young_female", {
+              required: "Reason",
+              
+              validate: {
+                isPositive: (value) => value > 0 || "must be a positive number",
+              },
+            })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
               errors.young_female ? "border-red-500" : "border-[#CED4DB]"
             }`}
@@ -399,13 +440,13 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             id="internally_displaced_male"
             disabled={isView}
             placeholder="Enter amount"
-            {...register(
-              "internally_displaced_male",
-              selectedPurpose &&
-                selectedPurpose.value === false && {
-                  required: "Required",
-                }
-            )}
+            {...register("internally_displaced_male", {
+              required: "Reason",
+              
+              validate: {
+                isPositive: (value) => value > 0 || "Must be a positive number",
+              },
+            })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
               errors.internally_displaced_male
                 ? "border-red-500"
@@ -433,13 +474,13 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             id="internally_displaced_female"
             disabled={isView}
             placeholder="Enter amount"
-            {...register(
-              "internally_displaced_female",
-              selectedPurpose &&
-                selectedPurpose.value === false && {
-                  required: "Required",
-                }
-            )}
+            {...register("internally_displaced_female", {
+              required: "Reason",
+              
+              validate: {
+                isPositive: (value) => value > 0 || "Must be a positive number",
+              },
+            })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
               errors.internally_displaced_female
                 ? "border-red-500"
@@ -467,13 +508,13 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             id="people_with_disabilities_male"
             disabled={isView}
             placeholder="Enter amount"
-            {...register(
-              "people_with_disabilities_male",
-              selectedPurpose &&
-                selectedPurpose.value === false && {
-                  required: "Required",
-                }
-            )}
+            {...register("people_with_disabilities_male", {
+              required: "Reason",
+              
+              validate: {
+                isPositive: (value) => value > 0 || "Must be a positive number",
+              },
+            })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
               errors.people_with_disabilities_male
                 ? "border-red-500"
@@ -501,13 +542,13 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             id="people_with_disabilities_female"
             disabled={isView}
             placeholder="Enter amount"
-            {...register(
-              "people_with_disabilities_female",
-              selectedPurpose &&
-                selectedPurpose.value === false && {
-                  required: "Reason is required",
-                }
-            )}
+            {...register("people_with_disabilities_female", {
+              required: "Reason",
+              
+              validate: {
+                isPositive: (value) => value > 0 || "Must be a positive number",
+              },
+            })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
               errors.people_with_disabilities_female
                 ? "border-red-500"
@@ -535,13 +576,13 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             id="returning_citizens_male"
             disabled={isView}
             placeholder="Enter amount"
-            {...register(
-              "returning_citizens_male",
-              selectedPurpose &&
-                selectedPurpose.value === false && {
-                  required: "Reason is required",
-                }
-            )}
+            {...register("returning_citizens_male", {
+              required: "Reason",
+              
+              validate: {
+                isPositive: (value) => value > 0 || "Must be a positive number",
+              },
+            })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
               errors.returning_citizens_male
                 ? "border-red-500"
@@ -569,13 +610,13 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             id="returning_citizens_female"
             disabled={isView}
             placeholder="Enter amount"
-            {...register(
-              "returning_citizens_female",
-              selectedPurpose &&
-                selectedPurpose.value === false && {
-                  required: "Reason is required",
-                }
-            )}
+            {...register("returning_citizens_female", {
+              required: "Reason",
+              
+              validate: {
+                isPositive: (value) => value > 0 || "Must be a positive number",
+              },
+            })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
               errors.returning_citizens_female
                 ? "border-red-500"

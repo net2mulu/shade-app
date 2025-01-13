@@ -546,7 +546,12 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             <Controller
               name="zone_id"
               control={control}
-              rules={dataZone && dataZone?.base_zone.length > 0 && { required: "Zone is required" }}
+              rules={
+                dataZone &&
+                dataZone?.base_zone.length > 0 && {
+                  required: "Zone is required",
+                }
+              }
               render={({ field }) => (
                 <Select
                   {...field}
@@ -577,9 +582,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                 * {errors.zone_id.message}
               </span>
             )}
-            {loadingZone &&   <span className="text-gray-400 text-xs capitalize">
-               Loading ...
-              </span>}
+            {loadingZone && (
+              <span className="text-gray-400 text-xs capitalize">
+                Loading ...
+              </span>
+            )}
           </div>
         )}
 
@@ -596,13 +603,20 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             <Controller
               name="district_id"
               control={control}
-              rules={dataDistrict && dataDistrict?.base_district.length > 0 && { required: "City/District is required" }}
+              rules={
+                dataDistrict &&
+                dataDistrict?.base_district.length > 0 && {
+                  required: "City/District is required",
+                }
+              }
               render={({ field }) => (
                 <Select
                   {...field}
-                  options={dataDistrict?.base_district.map((item) => {
-                    return { value: item.id, label: item.namejson.en };
-                  }) || []}
+                  options={
+                    dataDistrict?.base_district.map((item) => {
+                      return { value: item.id, label: item.namejson.en };
+                    }) || []
+                  }
                   isDisabled={isView}
                   placeholder="Select district"
                   styles={{
@@ -625,9 +639,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                 * {errors.district_id.message}
               </span>
             )}
-            {loadingDistrict &&   <span className="text-gray-400 text-xs capitalize">
-               Loading ...
-              </span>}
+            {loadingDistrict && (
+              <span className="text-gray-400 text-xs capitalize">
+                Loading ...
+              </span>
+            )}
           </div>
         )}
 
@@ -643,13 +659,20 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             <Controller
               name="kebele_id"
               control={control}
-              rules={dataKebele && dataKebele?.base_kebele.length > 0 && { required: "District is required" }}
+              rules={
+                dataKebele &&
+                dataKebele?.base_kebele.length > 0 && {
+                  required: "District is required",
+                }
+              }
               render={({ field }) => (
                 <Select
                   {...field}
-                  options={dataKebele?.base_kebele.map((item) => {
-                    return { value: item.id, label: item.namejson.en };
-                  }) || []}
+                  options={
+                    dataKebele?.base_kebele.map((item) => {
+                      return { value: item.id, label: item.namejson.en };
+                    }) || []
+                  }
                   placeholder="Select Kebele"
                   isDisabled={isView}
                   styles={{
@@ -672,9 +695,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                 * {errors.kebele_id.message}
               </span>
             )}
-            {loadingKebele &&   <span className="text-gray-400 text-xs capitalize">
-               Loading ...
-              </span>}
+            {loadingKebele && (
+              <span className="text-gray-400 text-xs capitalize">
+                Loading ...
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -1308,6 +1333,16 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
             {...register("construction_work_started_date", {
               required: "Start date is required",
+              validate: {
+                isNotFutureDate: (value) => {
+                  const today = new Date();
+                  const selectedDate = new Date(value);
+                  return (
+                    selectedDate <= today ||
+                    "Starting date cannot be after today"
+                  );
+                },
+              },
             })}
           />
           {errors.construction_work_started_date && (
@@ -1318,6 +1353,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
         </div>
 
         {/* //remove-@ */}
+
         {selectedConstructionLevel?.label.toLowerCase() === "finished" && (
           <div className="flex flex-col border p-4">
             <label
@@ -1331,19 +1367,32 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             <input
               name="construction_completed_date"
               type="date"
-              placeholder="e.g., block 14"
               disabled={isView}
               id="construction_completed_date"
               className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
               {...register("construction_completed_date", {
                 required: "Completion date is required",
+                validate: {
+                  isBeforeStartDate: (value) => {
+                    const startDate = new Date(
+                      watch("construction_work_started_date")
+                    );
+                    const endDate = new Date(value);
+                    return (
+                      startDate <= endDate ||
+                      "Completion date must be after start date"
+                    );
+                  },
+                  isNotFutureDate: (value) => {
+                    const today = new Date();
+                    const selectedDate = new Date(value);
+                    return (
+                      selectedDate <= today ||
+                      "Completion date cannot be after today"
+                    );
+                  },
+                },
               })}
-              rules={{
-                required:
-                  selectedConstructionLevel?.label.toLowerCase() === "finished"
-                    ? "Shade Type is required"
-                    : false,
-              }}
             />
             {errors.construction_completed_date && (
               <span className="text-red-500 text-xs capitalize">
@@ -1490,16 +1539,20 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             {...register("total_cost_of_production", {
               required: "Total cost of production is required",
               valueAsNumber: true,
+              validate: {
+                isPositive: (value) =>
+                  value > 0 || "Total cost must be a positive number",
+              },
             })}
             name="total_cost_of_production"
             type="number"
             disabled={isView}
-            placeholder="eg. 100000"
+            placeholder="e.g., 100000"
             id="total_cost_of_production"
             className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
           />
           {errors.total_cost_of_production && (
-            <p className="text-red-500 text-xs capitalize m*t-1">
+            <p className="text-red-500 text-xs capitalize mt-1">
               * {errors.total_cost_of_production.message}
             </p>
           )}

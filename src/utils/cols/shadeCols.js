@@ -100,7 +100,7 @@ export const getColumns = (
                   view
                 </p>
               </button>
-              {tabStatus === TabStatusOptions[1] && (
+              {props.row.original.assigned_sheds.length <= 0 && (
                 <button
                   className="text-sm border-0 font-medium rounded-md hover:opacity-60 p-1 text-[#4D515A] group relative"
                   onClick={() => {
