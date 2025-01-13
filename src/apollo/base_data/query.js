@@ -1,17 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const GET_KEBELES = gql`
-  query MyQuery($limit: Int) {
-    base_kebele(limit: $limit) {
-      id
-      namejson
-    }
-  }
-`;
-
-export const GET_CITIES = gql`
+export const GET_REGIONS = gql`
   query MyQuery {
-    base_cities {
+    base_regions {
       id
       namejson
     }
@@ -19,8 +10,8 @@ export const GET_CITIES = gql`
 `;
 
 export const GET_ZONES = gql`
-  query MyQuery($limit: Int) {
-    base_zone(limit: $limit) {
+  query MyQuery($where: base_zone_bool_exp) {
+    base_zone(where: $where) {
       id
       namejson
       __typename
@@ -28,9 +19,18 @@ export const GET_ZONES = gql`
   }
 `;
 
-export const GET_REGIONS = gql`
-  query MyQuery {
-    base_regions {
+export const GET_DISTRICT = gql`
+  query MyQuery($where: base_district_bool_exp) {
+    base_district(where: $where) {
+      id
+      namejson
+    }
+  }
+`;
+
+export const GET_KEBELES = gql`
+  query MyQuery($where: base_kebele_bool_exp) {
+    base_kebele(where: $where) {
       id
       namejson
     }

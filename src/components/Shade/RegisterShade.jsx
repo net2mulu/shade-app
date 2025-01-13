@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 import { getTempClient, resetClient } from "../../apollo/client";
 import {
-  GET_CITIES,
+  GET_DISTRICT,
   GET_KEBELES,
   GET_REGIONS,
   GET_SECTORS,
@@ -60,9 +60,9 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
               label: selectedShade?.region?.namejson?.en,
               value: selectedShade?.region?.id,
             },
-            city_id: {
-              label: selectedShade?.city?.namejson?.en,
-              value: selectedShade?.city?.id,
+            district_id: {
+              label: selectedShade?.district?.namejson?.en,
+              value: selectedShade?.district?.id,
             },
             zone_id: {
               label: selectedShade?.zone?.namejson?.en,
@@ -192,23 +192,19 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
     client: updatedClient,
   });
 
-  const {
-    loading: loadingKebele,
-    data: dataKebele,
-    error: errorKebele,
-  } = useQuery(GET_KEBELES, {
-    variables: {
-      limit: 10,
-    },
-    skip: false,
-    client,
-  });
+  const selectedConstructionType = watch("construction_type_id");
+  const selectedServiceType = watch("service_type_id");
+  const selectedConstructionLevel = watch("construction_level_id");
+
+  const selectedRegion = watch("region_id");
+  const selectedZone = watch("zone_id");
+  const selectedDistrict = watch("district_id");
 
   const {
-    loading: loadingCity,
-    data: dataCity,
-    error: errorCity,
-  } = useQuery(GET_CITIES, {
+    loading: loadingRegion,
+    data: dataRegion,
+    error: errorRegion,
+  } = useQuery(GET_REGIONS, {
     skip: false,
     client,
   });
@@ -219,18 +215,51 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
     error: errorZone,
   } = useQuery(GET_ZONES, {
     variables: {
-      limit: 10,
+      where: selectedRegion
+        ? {
+            region_id: {
+              _eq: selectedRegion?.value,
+            },
+          }
+        : {},
     },
-    skip: false,
+    skip: selectedRegion && selectedRegion.value ? false : true,
     client,
   });
 
   const {
-    loading: loadingRegion,
-    data: dataRegion,
-    error: errorRegion,
-  } = useQuery(GET_REGIONS, {
-    skip: false,
+    loading: loadingDistrict,
+    data: dataDistrict,
+    error: errorDistrict,
+  } = useQuery(GET_DISTRICT, {
+    variables: {
+      where: selectedZone
+        ? {
+            zone_id: {
+              _eq: selectedZone?.value,
+            },
+          }
+        : {},
+    },
+    skip: selectedZone && selectedZone.value ? false : true,
+    client,
+  });
+
+  const {
+    loading: loadingKebele,
+    data: dataKebele,
+    error: errorKebele,
+  } = useQuery(GET_KEBELES, {
+    variables: {
+      where: selectedDistrict
+        ? {
+            district_id: {
+              _eq: selectedDistrict?.value,
+            },
+          }
+        : {},
+    },
+    skip: selectedDistrict && selectedDistrict.value ? false : true,
     client,
   });
 
@@ -316,9 +345,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
   });
 
   if (
-    loadingKebele ||
-    loadingCity ||
-    loadingZone ||
     loadingRegion ||
     loadingService ||
     loadingSector ||
@@ -335,7 +361,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
 
   if (
     errorKebele ||
-    errorCity ||
+    errorDistrict ||
     errorZone ||
     errorRegion ||
     errorService ||
@@ -360,7 +386,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
     const userId = localStorage.getItem("user_id") ?? null;
 
     const leftFields = {};
-
 
     if (!data?.created_by_id) {
       leftFields["created_by_id"] =
@@ -392,10 +417,6 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
       console.error("Error updating user:", error);
     }
   };
-
-  const selectedConstructionType = watch("construction_type_id");
-  const selectedServiceType = watch("service_type_id");
-  const selectedConstructionLevel = watch("construction_level_id");
 
   return (
     <form
@@ -513,131 +534,149 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           )}
         </div>
 
-        <div className="flex flex-col">
-          <label
-            htmlFor="zone_id"
-            className="text-black text-base font-medium capitalize"
-          >
-            Zone/ Division <span className="text-red-400">*</span>
-          </label>
-          <span className="text-[#CBCBCB] text-sm">ዞን/ክፍለ ከተማ</span>
-          <Controller
-            name="zone_id"
-            control={control}
-            rules={{ required: "Zone is required" }}
-            render={({ field }) => (
-              <Select
-                {...field}
-                options={dataZone.base_zone.map((item) => {
-                  return { value: item.id, label: item.namejson.en };
-                })}
-                isDisabled={isView}
-                placeholder="Select Zone"
-                styles={{
-                  control: (baseStyles, state) => ({
-                    ...baseStyles,
-                    borderColor: errors.zone_id
-                      ? "red"
-                      : state.isFocused
-                      ? "#3170B5"
-                      : "#CED4DB",
-                    padding: ".5px",
-                    marginTop: ".5rem",
-                  }),
-                }}
-              />
+        {selectedRegion && selectedRegion.value && (
+          <div className="flex flex-col">
+            <label
+              htmlFor="zone_id"
+              className="text-black text-base font-medium capitalize"
+            >
+              Zone/ Division <span className="text-red-400">*</span>
+            </label>
+            <span className="text-[#CBCBCB] text-sm">ዞን/ክፍለ ከተማ</span>
+            <Controller
+              name="zone_id"
+              control={control}
+              rules={dataZone && dataZone?.base_zone.length > 0 && { required: "Zone is required" }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  options={
+                    dataZone?.base_zone.map((item) => {
+                      return { value: item.id, label: item.namejson.en };
+                    }) || []
+                  }
+                  isDisabled={isView}
+                  placeholder="Select Zone"
+                  styles={{
+                    control: (baseStyles, state) => ({
+                      ...baseStyles,
+                      borderColor: errors.zone_id
+                        ? "red"
+                        : state.isFocused
+                        ? "#3170B5"
+                        : "#CED4DB",
+                      padding: ".5px",
+                      marginTop: ".5rem",
+                    }),
+                  }}
+                />
+              )}
+            />
+            {errors.zone_id && (
+              <span className="text-red-500 text-xs capitalize">
+                * {errors.zone_id.message}
+              </span>
             )}
-          />
-          {errors.zone_id && (
-            <span className="text-red-500 text-xs capitalize">
-              * {errors.zone_id.message}
-            </span>
-          )}
-        </div>
+            {loadingZone &&   <span className="text-gray-400 text-xs capitalize">
+               Loading ...
+              </span>}
+          </div>
+        )}
 
-        <div className="flex flex-col">
-          <label
-            htmlFor="city_id"
-            className="text-black text-base font-medium capitalize"
-          >
-            City <span className="text-red-400">*</span>
-          </label>
-          <span className="text-[#CBCBCB] text-sm">ወረዳ/ከተማ አስተዳደር</span>
-          <Controller
-            name="city_id"
-            control={control}
-            rules={{ required: "City is required" }}
-            render={({ field }) => (
-              <Select
-                {...field}
-                options={dataCity.base_cities.map((item) => {
-                  return { value: item.id, label: item.namejson.en };
-                })}
-                isDisabled={isView}
-                placeholder="Select City"
-                styles={{
-                  control: (baseStyles, state) => ({
-                    ...baseStyles,
-                    borderColor: errors.city_id
-                      ? "red"
-                      : state.isFocused
-                      ? "#3170B5"
-                      : "#CED4DB",
-                    padding: ".5px",
-                    marginTop: ".5rem",
-                  }),
-                }}
-              />
+        {selectedZone && selectedZone.value && (
+          <div className="flex flex-col">
+            <label
+              htmlFor="district_id"
+              className="text-black text-base font-medium capitalize"
+            >
+              District/city administration{" "}
+              <span className="text-red-400">*</span>
+            </label>
+            <span className="text-[#CBCBCB] text-sm">ወረዳ/ከተማ አስተዳደር</span>
+            <Controller
+              name="district_id"
+              control={control}
+              rules={dataDistrict && dataDistrict?.base_district.length > 0 && { required: "City/District is required" }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  options={dataDistrict?.base_district.map((item) => {
+                    return { value: item.id, label: item.namejson.en };
+                  }) || []}
+                  isDisabled={isView}
+                  placeholder="Select district"
+                  styles={{
+                    control: (baseStyles, state) => ({
+                      ...baseStyles,
+                      borderColor: errors.district_id
+                        ? "red"
+                        : state.isFocused
+                        ? "#3170B5"
+                        : "#CED4DB",
+                      padding: ".5px",
+                      marginTop: ".5rem",
+                    }),
+                  }}
+                />
+              )}
+            />
+            {errors.district_id && (
+              <span className="text-red-500 text-xs capitalize">
+                * {errors.district_id.message}
+              </span>
             )}
-          />
-          {errors.city_id && (
-            <span className="text-red-500 text-xs capitalize">
-              * {errors.city_id.message}
-            </span>
-          )}
-        </div>
+            {loadingDistrict &&   <span className="text-gray-400 text-xs capitalize">
+               Loading ...
+              </span>}
+          </div>
+        )}
 
-        <div className="flex flex-col">
-          <label
-            htmlFor="kebele_id"
-            className="text-black text-base font-medium capitalize"
-          >
-            Kebele <span className="text-red-400">*</span>
-          </label>
-          <span className="text-[#CBCBCB] text-sm">ቀበሌ</span>
-          <Controller
-            name="kebele_id"
-            control={control}
-            rules={{ required: "Kebele is required" }}
-            render={({ field }) => (
-              <Select
-                {...field}
-                options={dataKebele.base_kebele.map((item) => {
-                  return { value: item.id, label: item.namejson.en };
-                })}
-                placeholder="Select Kebele"
-                isDisabled={isView}
-                styles={{
-                  control: (baseStyles, state) => ({
-                    ...baseStyles,
-                    borderColor: errors.kebele_id
-                      ? "red"
-                      : state.isFocused
-                      ? "#3170B5"
-                      : "#CED4DB",
-                    padding: ".5px",
-                    marginTop: ".5rem",
-                  }),
-                }}
-              />
+        {selectedDistrict && selectedDistrict.value && (
+          <div className="flex flex-col">
+            <label
+              htmlFor="kebele_id"
+              className="text-black text-base font-medium capitalize"
+            >
+              Kebele <span className="text-red-400">*</span>
+            </label>
+            <span className="text-[#CBCBCB] text-sm">ቀበሌ</span>
+            <Controller
+              name="kebele_id"
+              control={control}
+              rules={dataKebele && dataKebele?.base_kebele.length > 0 && { required: "District is required" }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  options={dataKebele?.base_kebele.map((item) => {
+                    return { value: item.id, label: item.namejson.en };
+                  }) || []}
+                  placeholder="Select Kebele"
+                  isDisabled={isView}
+                  styles={{
+                    control: (baseStyles, state) => ({
+                      ...baseStyles,
+                      borderColor: errors.kebele_id
+                        ? "red"
+                        : state.isFocused
+                        ? "#3170B5"
+                        : "#CED4DB",
+                      padding: ".5px",
+                      marginTop: ".5rem",
+                    }),
+                  }}
+                />
+              )}
+            />
+            {errors.kebele_id && (
+              <span className="text-red-500 text-xs capitalize">
+                * {errors.kebele_id.message}
+              </span>
             )}
-          />
-          {errors.kebele_id && (
-            <span className="text-red-500 text-xs capitalize">
-              * {errors.kebele_id.message}
-            </span>
-          )}
-        </div>
+            {loadingKebele &&   <span className="text-gray-400 text-xs capitalize">
+               Loading ...
+              </span>}
+          </div>
+        )}
       </div>
 
       <h2 className="text-[#3170B5] text-xl font-bold">...</h2>
@@ -980,7 +1019,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           )}
         </div>
 
-{/* //remove-@ */}
+        {/* //remove-@ */}
         {selectedServiceType?.label.toLowerCase() === "shed" && (
           <div className="flex flex-col border p-4">
             <label
@@ -1118,7 +1157,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           )}
         </div>
 
-{/* //remove-@ */}
+        {/* //remove-@ */}
         {selectedConstructionType?.label.toLowerCase() === "building" && (
           <div className="flex flex-col border p-4">
             <label
@@ -1212,7 +1251,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             </span>
           )}
         </div>
-{/* //remove-@ */}
+        {/* //remove-@ */}
         {selectedConstructionLevel?.label.toLowerCase() ===
           "under_construction" && (
           <div className="flex flex-col border p-4">
@@ -1278,7 +1317,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           )}
         </div>
 
-{/* //remove-@ */}
+        {/* //remove-@ */}
         {selectedConstructionLevel?.label.toLowerCase() === "finished" && (
           <div className="flex flex-col border p-4">
             <label
@@ -1314,7 +1353,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           </div>
         )}
 
-{/* //remove-@ */}
+        {/* //remove-@ */}
         {selectedConstructionLevel?.label.toLowerCase() === "stopped" && (
           <div className="flex flex-col border p-4">
             <label
@@ -1373,7 +1412,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           </div>
         )}
 
-{/* //remove-@ */}
+        {/* //remove-@ */}
         {selectedConstructionLevel?.label.toLowerCase() === "finished" && (
           <div className="flex flex-col border p-4">
             <label
