@@ -1,5 +1,50 @@
 import { gql } from "@apollo/client";
 
+export const COMBINED_SELECT_BASE_DATA = gql`
+  query SelectData {
+    base_regions {
+      id
+      namejson
+    }
+    base_sectors {
+      id
+      namejson
+    }
+    base_service_types {
+      id
+      name_json
+    }
+    base_shed_types {
+      id
+      name_json
+    }
+    base_built_by {
+      id
+      name_json
+    }
+    base_construction_levels {
+      id
+      name_json
+    }
+    base_construction_types {
+      id
+      name_json
+    }
+    base_not_transferred_reasons {
+      id
+      name_json
+    }
+    base_construction_stopped_reasons {
+      id
+      name_json
+    }
+    base_number_of_floors {
+      id
+      name_json
+    }
+  }
+`;
+
 export const GET_REGIONS = gql`
   query MyQuery {
     base_regions {

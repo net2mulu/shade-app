@@ -7,17 +7,8 @@ import { getTempClient, resetClient } from "../../apollo/client";
 import {
   GET_DISTRICT,
   GET_KEBELES,
-  GET_REGIONS,
-  GET_SECTORS,
-  GET_SERVICES_TYPES,
-  GET_BUILT_BY,
   GET_ZONES,
-  GET_SHED_TYPES,
-  GET_CONSTRUCTION_LEVELS,
-  GET_CONSTRUCTION_TYPES,
-  GET_CONSTRUCTION_NOT_TRANSFERRED_REASON,
-  GET_CONSTRUCTION_STOPPED_REASON,
-  GET_FLOORS,
+  COMBINED_SELECT_BASE_DATA,
 } from "../../apollo/base_data/query";
 import Loader from "../loader";
 import { boolOptions } from "../../utils/data";
@@ -101,10 +92,10 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
   const selectedDistrict = watch("district_id");
 
   const {
-    loading: loadingRegion,
-    data: dataRegion,
-    error: errorRegion,
-  } = useQuery(GET_REGIONS, {
+    loading: loadingSelectData,
+    data: selectData,
+    error: errorSelectData,
+  } = useQuery(COMBINED_SELECT_BASE_DATA, {
     skip: false,
     client,
   });
@@ -163,117 +154,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
     client,
   });
 
-  const {
-    loading: loadingSector,
-    data: dataSector,
-    error: errorSector,
-  } = useQuery(GET_SECTORS, {
-    skip: false,
-    client,
-  });
-
-  const {
-    loading: loadingService,
-    data: dataService,
-    error: errorService,
-  } = useQuery(GET_SERVICES_TYPES, {
-    skip: false,
-    client: updatedClient,
-  });
-
-  const {
-    loading: loadingShed,
-    data: dataShed,
-    error: errorShed,
-  } = useQuery(GET_SHED_TYPES, {
-    skip: false,
-    client: updatedClient,
-  });
-
-  const {
-    loading: loadingBuiltBy,
-    data: dataBuiltBy,
-    error: errorBuiltBy,
-  } = useQuery(GET_BUILT_BY, {
-    skip: false,
-    client: updatedClient,
-  });
-
-  const {
-    loading: loadingConLevels,
-    data: dataConLevels,
-    error: errorConLevels,
-  } = useQuery(GET_CONSTRUCTION_LEVELS, {
-    skip: false,
-    client: updatedClient,
-  });
-
-  const {
-    loading: loadingConTypes,
-    data: dataConTypes,
-    error: errorConTypes,
-  } = useQuery(GET_CONSTRUCTION_TYPES, {
-    skip: false,
-    client: updatedClient,
-  });
-
-  const {
-    loading: loadingReasonTrans,
-    data: dataReasonTrans,
-    error: errorReasonTrans,
-  } = useQuery(GET_CONSTRUCTION_NOT_TRANSFERRED_REASON, {
-    skip: false,
-    client: updatedClient,
-  });
-
-  const {
-    loading: loadingReasonStop,
-    data: dataReasonStop,
-    error: errorReasonStop,
-  } = useQuery(GET_CONSTRUCTION_STOPPED_REASON, {
-    skip: false,
-    client: updatedClient,
-  });
-
-  const {
-    loading: loadingFloorNo,
-    data: dataFloorNo,
-    error: errorFloorNo,
-  } = useQuery(GET_FLOORS, {
-    skip: false,
-    client: updatedClient,
-  });
-
-  if (
-    loadingRegion ||
-    loadingService ||
-    loadingSector ||
-    loadingShed ||
-    loadingBuiltBy ||
-    loadingConLevels ||
-    loadingConTypes ||
-    loadingReasonTrans ||
-    loadingReasonStop ||
-    loadingFloorNo
-  ) {
+  if (loadingSelectData) {
     return <Loader />;
   }
 
-  if (
-    errorKebele ||
-    errorDistrict ||
-    errorZone ||
-    errorRegion ||
-    errorService ||
-    errorSector ||
-    errorShed ||
-    errorBuiltBy ||
-    errorConLevels ||
-    errorConTypes ||
-    errorReasonTrans ||
-    errorReasonStop ||
-    errorFloorNo
-  ) {
+  if (errorKebele || errorDistrict || errorZone || errorSelectData) {
     return (
       <div className="my-6 text-center text-red-500">
         <p>Error fetching data</p>
@@ -407,7 +292,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             render={({ field }) => (
               <Select
                 {...field}
-                options={dataRegion.base_regions.map((item) => {
+                options={selectData?.base_regions.map((item) => {
                   return { value: item.id, label: item.namejson.en };
                 })}
                 placeholder="Select Region"
@@ -547,7 +432,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           </div>
         )}
 
-        {((selectedDistrict && selectedDistrict.value) ) && (
+        {selectedDistrict && selectedDistrict.value && (
           <div className="flex flex-col">
             <label
               htmlFor="kebele_id"
@@ -873,7 +758,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             render={({ field }) => (
               <Select
                 {...field}
-                options={dataSector.base_sectors.map((item) => {
+                options={ selectData?.base_sectors.map((item) => {
                   return { value: item.id, label: item.namejson.en };
                 })}
                 isDisabled={isView}
@@ -916,7 +801,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             render={({ field }) => (
               <Select
                 {...field}
-                options={dataService.base_service_types.map((item) => {
+                options={selectData.base_service_types.map((item) => {
                   return { value: item.id, label: item.name_json.en };
                 })}
                 placeholder="Select Service"
@@ -966,7 +851,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
               render={({ field }) => (
                 <Select
                   {...field}
-                  options={dataShed.base_shed_types.map((item) => {
+                  options={selectData?.base_shed_types.map((item) => {
                     return { value: item.id, label: item.name_json.en };
                   })}
                   isDisabled={isView}
@@ -1010,7 +895,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             render={({ field }) => (
               <Select
                 {...field}
-                options={dataBuiltBy.base_built_by.map((item) => {
+                options={selectData?.base_built_by.map((item) => {
                   return { value: item.id, label: item.name_json.en };
                 })}
                 placeholder="Select Option"
@@ -1054,7 +939,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             render={({ field }) => (
               <Select
                 {...field}
-                options={dataConTypes.base_construction_types.map((item) => {
+                options={selectData?.base_construction_types.map((item) => {
                   return { value: item.id, label: item.name_json.en };
                 })}
                 placeholder="Select Construction Type"
@@ -1105,7 +990,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
               render={({ field }) => (
                 <Select
                   {...field}
-                  options={dataFloorNo.base_number_of_floors.map((item) => {
+                  options={selectData?.base_number_of_floors.map((item) => {
                     return { value: item.id, label: item.name_json.en };
                   })}
                   placeholder="Select Floor Number"
@@ -1149,7 +1034,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             render={({ field }) => (
               <Select
                 {...field}
-                options={dataConLevels.base_construction_levels.map((item) => {
+                options={selectData?.base_construction_levels.map((item) => {
                   return { value: item.id, label: item.name_json.en };
                 })}
                 placeholder="Select level"
@@ -1325,7 +1210,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
               render={({ field }) => (
                 <Select
                   {...field}
-                  options={dataReasonStop.base_construction_stopped_reasons.map(
+                  options={selectData?.base_construction_stopped_reasons.map(
                     (item) => {
                       return { value: item.id, label: item.name_json.en };
                     }
@@ -1388,7 +1273,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
               render={({ field }) => (
                 <Select
                   {...field}
-                  options={dataReasonTrans.base_not_transferred_reasons.map(
+                  options={selectData?.base_not_transferred_reasons.map(
                     (item) => {
                       return { value: item.id, label: item.name_json.en };
                     }
