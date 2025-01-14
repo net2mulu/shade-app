@@ -404,7 +404,7 @@ export const GET_ENTERPRISES_ASSIGNED_SHEDS = gql`
       shed {
         id
         name
-        city {
+        region {
           namejson
         }
       }

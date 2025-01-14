@@ -16,6 +16,7 @@ import { boolOptions } from "../../utils/data";
 import { Button } from "@headlessui/react";
 import { ClipLoader } from "react-spinners";
 import { customHandleError } from "../../utils/methods/handleError";
+import { getEnterpriseValues } from "../../utils/form/defaultValues/enterprise";
 
 const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
   const {
@@ -25,46 +26,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
     control,
     watch,
     formState: { errors },
-  } = useForm(
-    selectedEnterprise
-      ? {
-          defaultValues: {
-            organization_id: {
-              label: selectedEnterprise?.enterprise[0]?.namejson?.en ?? "",
-              value: selectedEnterprise?.enterprise[0]?.id ?? null,
-            },
-            used_for_intended_purpose: {
-              label: selectedEnterprise?.used_for_intended_purpose
-                ? "Yes"
-                : "No",
-              value: selectedEnterprise?.used_for_intended_purpose,
-            },
-            ...(selectedEnterprise?.reason_not_used_for_intended_purpose && {
-              reason_not_used_for_intended_purpose:
-                selectedEnterprise?.reason_not_used_for_intended_purpose ?? "",
-            }),
-            contract_transferred_time:
-              selectedEnterprise?.contract_transferred_time ?? "",
-            contract_expiration_time:
-              selectedEnterprise?.contract_expiration_time ?? "",
-            young_male: selectedEnterprise?.young_male ?? "",
-            young_female: selectedEnterprise?.young_female ?? "",
-            internally_displaced_male:
-              selectedEnterprise?.internally_displaced_male ?? "",
-            internally_displaced_female:
-              selectedEnterprise?.internally_displaced_female ?? "",
-            people_with_disabilities_male:
-              selectedEnterprise?.people_with_disabilities_male ?? "",
-            people_with_disabilities_female:
-              selectedEnterprise?.people_with_disabilities_female ?? "",
-            returning_citizens_male:
-              selectedEnterprise?.returning_citizens_male ?? "",
-            returning_citizens_female:
-              selectedEnterprise?.returning_citizens_female ?? "",
-          },
-        }
-      : {}
-  );
+  } = useForm(getEnterpriseValues(selectedEnterprise));
 
   const updatedClient = useMemo(() => getTempClient(), []);
 
@@ -132,21 +94,6 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
   const selectedPurpose = watch("used_for_intended_purpose");
 
   const transferredDate = watch("contract_transferred_time");
-
-  // Automatically calculate expiration date when the transferred date changes
-  const plusFiveYears = () => {
-    if (transferredDate) {
-      const transferDateObj = new Date(transferredDate);
-      const expirationDate = new Date(
-        transferDateObj.setFullYear(transferDateObj.getFullYear() + 5)
-      )
-        .toISOString()
-        .split("T")[0]; // Format date as YYYY-MM-DD
-      setValue("contract_expiration_time", expirationDate, {
-        shouldValidate: true,
-      });
-    }
-  };
 
   return (
     <form
@@ -378,7 +325,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             placeholder="Enter amount"
             {...register("young_male", {
               required: "Reason",
-              
+
               validate: {
                 isPositive: (value) => value > 0 || "Must be a positive number",
               },
@@ -410,7 +357,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             placeholder="Enter amount"
             {...register("young_female", {
               required: "Reason",
-              
+
               validate: {
                 isPositive: (value) => value > 0 || "must be a positive number",
               },
@@ -442,7 +389,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             placeholder="Enter amount"
             {...register("internally_displaced_male", {
               required: "Reason",
-              
+
               validate: {
                 isPositive: (value) => value > 0 || "Must be a positive number",
               },
@@ -476,7 +423,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             placeholder="Enter amount"
             {...register("internally_displaced_female", {
               required: "Reason",
-              
+
               validate: {
                 isPositive: (value) => value > 0 || "Must be a positive number",
               },
@@ -510,7 +457,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             placeholder="Enter amount"
             {...register("people_with_disabilities_male", {
               required: "Reason",
-              
+
               validate: {
                 isPositive: (value) => value > 0 || "Must be a positive number",
               },
@@ -544,7 +491,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             placeholder="Enter amount"
             {...register("people_with_disabilities_female", {
               required: "Reason",
-              
+
               validate: {
                 isPositive: (value) => value > 0 || "Must be a positive number",
               },
@@ -578,7 +525,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             placeholder="Enter amount"
             {...register("returning_citizens_male", {
               required: "Reason",
-              
+
               validate: {
                 isPositive: (value) => value > 0 || "Must be a positive number",
               },
@@ -612,7 +559,7 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
             placeholder="Enter amount"
             {...register("returning_citizens_female", {
               required: "Reason",
-              
+
               validate: {
                 isPositive: (value) => value > 0 || "Must be a positive number",
               },
