@@ -46,7 +46,7 @@ export const COMBINED_SELECT_BASE_DATA = gql`
 `;
 
 export const GET_ZONES = gql`
-  query MyQuery($where: base_zone_bool_exp) {
+  query Zonees($where: base_zone_bool_exp) {
     base_zone(where: $where) {
       id
       namejson
@@ -56,7 +56,7 @@ export const GET_ZONES = gql`
 `;
 
 export const GET_DISTRICT = gql`
-  query MyQuery($where: base_district_bool_exp) {
+  query District($where: base_district_bool_exp) {
     base_district(where: $where) {
       id
       namejson
@@ -65,7 +65,7 @@ export const GET_DISTRICT = gql`
 `;
 
 export const GET_KEBELES = gql`
-  query MyQuery($where: base_kebele_bool_exp) {
+  query Kebele($where: base_kebele_bool_exp) {
     base_kebele(where: $where) {
       id
       namejson
@@ -74,7 +74,7 @@ export const GET_KEBELES = gql`
 `;
 
 export const GET_SHED_TYPES = gql`
-  query MyQuery {
+  query ShedTypes {
     base_shed_types {
       id
       name_json

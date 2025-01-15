@@ -3,22 +3,22 @@ import { Button } from "@headlessui/react";
 import React, { useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
-import { getTempClient, resetClient } from "../../apollo/client";
+import { getTempClient, resetClient } from "../../../apollo/client";
 import {
   GET_DISTRICT,
   GET_KEBELES,
   GET_ZONES,
   COMBINED_SELECT_BASE_DATA,
-} from "../../apollo/base_data/query";
-import Loader from "../loader";
-import { boolOptions } from "../../utils/data";
-import { INSERT_SHED, UPDATE_SHED } from "../../apollo/shades/mutation";
+} from "../../../apollo/base_data/query";
+import Loader from "../../loader";
+import { boolOptions } from "../../../utils/data";
+import { INSERT_SHED, UPDATE_SHED } from "../../../apollo/shades/mutation";
 import toast from "react-hot-toast";
-import { transformObject } from "../../utils/methods/transferData";
-import { GET_SHEDS } from "../../apollo/shades/query";
+import { transformObject } from "../../../utils/methods/transferData";
+import { GET_SHEDS } from "../../../apollo/shades/query";
 import { ClipLoader } from "react-spinners";
-import { customHandleError } from "../../utils/methods/handleError";
-import { getShadeValues } from "../../utils/form/defaultValues/shade";
+import { customHandleError } from "../../../utils/methods/handleError";
+import { getShadeValues } from "../../../utils/form/defaultValues/shade";
 
 function handleTheme(theme) {
   return {
@@ -44,7 +44,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
     formState: { errors },
   } = useForm(getShadeValues(selectedShade));
 
+
+
   const client = useMemo(() => resetClient(), []);
+
+  
   const updatedClient = useMemo(() => getTempClient(), []);
 
   const [createShed, { loading: loadingSubmit }] = useMutation(INSERT_SHED, {

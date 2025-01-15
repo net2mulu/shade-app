@@ -50,31 +50,33 @@ const calculatePercentage = (aggrigatesData) => {
   };
 };
 
-const RegisteredShadeTypes = () => {
+const RegisteredShadeTypes = ({
+  dataShadeTypes,
+  loadingShadeTypes,
+  errorShadeTypes,
+}) => {
   const client = useMemo(() => getTempClient(), []);
 
-  const {
-    loading: loadingSheds,
-    data: dataSheds,
-    error: errorSheds,
-  } = useQuery(GET_SHED_TYPES, {
-    client: client,
-  });
   const {
     loading: loadingAggrigate,
     data: dataAggrigate,
     error: errorAggrigate,
   } = useQuery(
-    dataSheds && dataSheds.base_shed_types
-      ? getDynamicAggrigateQuery(dataSheds?.base_shed_types)
+    dataShadeTypes && dataShadeTypes.base_shed_types
+      ? getDynamicAggrigateQuery(dataShadeTypes?.base_shed_types)
       : GET_SHED_TYPES,
     {
       client: client,
-      skip: loadingSheds || errorSheds ? true : false,
+      skip: loadingShadeTypes || errorShadeTypes ? true : false,
     }
   );
 
-  if (loadingSheds || loadingAggrigate || errorSheds || errorAggrigate) {
+  if (
+    loadingShadeTypes ||
+    loadingAggrigate ||
+    errorShadeTypes ||
+    errorAggrigate
+  ) {
     return (
       <section className="flex flex-col h-full min-h-[38vh] animate-pulse col-span-2 bg-white rounded-lg p-4" />
     );
@@ -94,7 +96,8 @@ const RegisteredShadeTypes = () => {
         <div className="w-[98%]  justify-between flex items-center">
           {ViewData.shadeTypes.map((shadeType, i) => (
             <ShadePercentage
-              key={i}
+              key={i + "Percent"}
+              keyIndex={i}
               shadeType={shadeType}
               zIndex={ViewData.shadeTypes.length - i}
             />
@@ -105,11 +108,10 @@ const RegisteredShadeTypes = () => {
   );
 };
 
-const ShadePercentage = ({ key, shadeType, zIndex }) => {
+const ShadePercentage = ({ keyIndex, shadeType, zIndex }) => {
   const BG_COLOR = getRandomColor();
   return (
     <section
-      key={key}
       className={`flex flex-col gap-8  items-start justify-center`}
       style={{
         width: shadeType.percentage,
@@ -123,7 +125,7 @@ const ShadePercentage = ({ key, shadeType, zIndex }) => {
         }}
       />
       <div
-        className={`text-[#959595] flex flex-col ${key !== 0 && "ml-[10%]"}`}
+        className={`text-[#959595] flex flex-col ${keyIndex !== 0 && "ml-[10%]"}`}
       >
         <div className="flex items-center justify-start gap-4">
           <div

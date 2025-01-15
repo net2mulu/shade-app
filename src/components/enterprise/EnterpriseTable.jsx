@@ -40,11 +40,11 @@ const EnterpriseTable = ({
     <article className="overflow-x-auto">
       <table className="w-full border-0 bg-white pb-10 min-w-max overflow-hidden">
         <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="bg-[#F8FAFC]">
-              {headerGroup.headers.map((header) => (
+          {table.getHeaderGroups().map((headerGroup, index) => (
+            <tr key={headerGroup.id + "th-ent-" + index} className="bg-[#F8FAFC]">
+              {headerGroup.headers.map((header, indexTwo) => (
                 <th
-                  key={header.id}
+                  key={header.id + "h-ent-sub-" + indexTwo}
                   className={`font-inter font-semibold text-center text-xs text-[#4d515a] capitalize py-5 border-0 px-4 sm:px-6`}
                 >
                   {header.isPlaceholder
@@ -73,12 +73,12 @@ const EnterpriseTable = ({
             <tbody>
               {table.getRowModel().rows.map((row, index) => (
                 <tr
-                  key={row.id}
+                  key={row.id + "_enterprise-row" + index}
                   className={`border-0 hover:bg-[#F8FAFC] font-outfit capitalize text-sm `}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map((cell, indexTwo) => (
                     <td
-                      key={cell.id}
+                      key={row.id + "_enterprise-row" + cell.id + indexTwo}
                       className={`py-3 border-b border-b-[#E2E8F0] border-dashed text-center px-4 sm:px-6`}
                     >
                       {flexRender(

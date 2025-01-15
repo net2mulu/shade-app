@@ -42,7 +42,7 @@ const createDynamicQuery = (shedTypes) => {
 
   return {
     query: gql`
-  query GetAssignedShedsByMonth {
+  query GetShedsByMonth {
     ${queries.join("\n")}
   }
 `,
@@ -67,7 +67,11 @@ const getGraphData = (data, queryKeys) => {
   return graphData;
 };
 
-const ShadeTypeByMonth = () => {
+const ShadeTypeByMonth = ({
+  dataShadeTypes,
+  loadingShadeTypes,
+  errorShadeTypes,
+}) => {
   const primaryAxis = useMemo(
     () => ({
       getValue: (datum) => datum.primary,
@@ -86,14 +90,6 @@ const ShadeTypeByMonth = () => {
   );
 
   const client = useMemo(() => getTempClient(), []);
-
-  const {
-    loading: loadingShadeTypes,
-    error: errorShadeTypes,
-    data: dataShadeTypes,
-  } = useQuery(GET_SHED_TYPES, {
-    client,
-  });
 
   const dynamicQuery = createDynamicQuery(
     loadingShadeTypes ? [] : dataShadeTypes.base_shed_types

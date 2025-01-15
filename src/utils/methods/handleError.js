@@ -1,4 +1,5 @@
 export const customHandleError = (err, toast) => {
+  console.log(err)
   if (err.graphQLErrors?.length > 0) {
 
     const graphQLError = err.graphQLErrors[0];

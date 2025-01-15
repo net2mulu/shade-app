@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Select from "react-select";
 
 import { Controller, useForm } from "react-hook-form";
@@ -17,6 +17,8 @@ import { Button } from "@headlessui/react";
 import { ClipLoader } from "react-spinners";
 import { customHandleError } from "../../utils/methods/handleError";
 import { getEnterpriseValues } from "../../utils/form/defaultValues/enterprise";
+import ErrorMsg from "../error";
+import useCustomRefetch from "../../hooks/useCustomRefetch";
 
 const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
   const {
@@ -29,6 +31,19 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
   } = useForm(getEnterpriseValues(selectedEnterprise));
 
   const updatedClient = useMemo(() => getTempClient(), []);
+
+  const {
+    loading: loadingEnterprises,
+    data: dataEnterprises,
+    error: errorEnterprise,
+    refetch: enterpriseRefetch,
+  } = useQuery(GET_ORGANIZATIONS, {
+    skip: false,
+    client: updatedClient,
+  });
+
+  const { handleRefetch, isRefetching, refetchError } =
+    useCustomRefetch(enterpriseRefetch);
 
   const [addEnterprise, { loading: loadingSubmit }] = useMutation(
     ADD_ENTERPRISE,
@@ -60,16 +75,18 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
     }
   );
 
-  const { loading: loadingEnterprises, data: dataEnterprises } = useQuery(
-    GET_ORGANIZATIONS,
-    {
-      skip: false,
-      client: updatedClient,
-    }
-  );
-
-  if (loadingEnterprises) {
+  if (loadingEnterprises || isRefetching) {
     return <Loader />;
+  }
+
+  if (errorEnterprise || refetchError) {
+    return (
+      <ErrorMsg
+        error={errorEnterprise}
+        message={null}
+        refetch={handleRefetch}
+      />
+    );
   }
 
   const onSubmit = async (data) => {

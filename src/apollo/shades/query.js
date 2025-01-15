@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_SHEDS = gql`
-  query MyQuery($offset: Int, $limit: Int, $where: enterprise_sheds_bool_exp) {
+  query Sheds($offset: Int, $limit: Int, $where: enterprise_sheds_bool_exp) {
     enterprise_sheds(
       order_by: { created_at: desc }
       offset: $offset
@@ -117,7 +117,7 @@ export const GET_SHEDS = gql`
 `;
 
 export const GET_ASSIGNED_SHEDS = gql`
-  query MyQuery($offset: Int, $limit: Int, $where: enterprise_sheds_bool_exp) {
+  query AssignedSheds($offset: Int, $limit: Int, $where: enterprise_sheds_bool_exp) {
     enterprise_sheds(
       order_by: { created_at: desc }
       offset: $offset
@@ -233,7 +233,7 @@ export const GET_ASSIGNED_SHEDS = gql`
 `;
 
 export const GET_UNASSIGNED_SHEDS = gql`
-  query MyQuery($offset: Int, $limit: Int, $where: enterprise_sheds_bool_exp) {
+  query UnassignedSheds($offset: Int, $limit: Int, $where: enterprise_sheds_bool_exp) {
     enterprise_sheds(
       order_by: { created_at: desc }
       offset: $offset
@@ -425,7 +425,7 @@ export const GET_ORGANIZATIONS = gql`
 `;
 
 export const GET_COMBINED_SHED_COUNT = gql`
-  query CombinedQuery {
+  query CombinedQueryStatus {
     totalShedsCount: enterprise_sheds_aggregate {
       aggregate {
         count
@@ -456,7 +456,7 @@ export const GET_COMBINED_SHED_COUNT = gql`
 `;
 
 export const GET_COMBINED_CONSTRUCTION_STATUS = gql`
-  query CombinedQuery {
+  query CombinedQueryStats {
     stopped: enterprise_sheds_aggregate(
       where: { construction_stopped_date: { _is_null: false } }
     ) {

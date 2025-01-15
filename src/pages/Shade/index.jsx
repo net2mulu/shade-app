@@ -12,8 +12,8 @@ import { getTempClient } from "../../apollo/client";
 import TabButtons from "../../components/molecule/TabsButton";
 import Pagination from "../../components/molecule/Pagination";
 import ModalContainer from "../../components/modals/ModalContainer";
-import RegisterShade from "../../components/Shade/RegisterShade";
-import AssignShade from "../../components/Shade/AssignShade";
+import RegisterShade from "../../components/modals/shade/RegisterShade";
+import AssignShade from "../../components/modals/shade/AssignShade";
 import SearchInput from "../../components/molecule/TableSearch";
 export const TabStatusOptions = ["all", "created", "assigned"];
 

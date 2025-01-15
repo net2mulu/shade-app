@@ -2,15 +2,17 @@ import { useMutation, useQuery } from "@apollo/client";
 import React, { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import Select from "react-select";
-import { GET_ENTERPRISES } from "../../apollo/shades/query";
-import { getTempClient } from "../../apollo/client";
-import Loader from "../loader";
-import { ASSIGN_SHED } from "../../apollo/shades/mutation";
+import { GET_ENTERPRISES } from "../../../apollo/shades/query";
+import { getTempClient } from "../../../apollo/client";
+import Loader from "../../loader";
+import { ASSIGN_SHED } from "../../../apollo/shades/mutation";
 import toast from "react-hot-toast";
 import { Button } from "@headlessui/react";
-import { transformObject } from "../../utils/methods/transferData";
+import { transformObject } from "../../../utils/methods/transferData";
 import { ClipLoader } from "react-spinners";
-import { customHandleError } from "../../utils/methods/handleError";
+import { customHandleError } from "../../../utils/methods/handleError";
+import useCustomRefetch from "../../../hooks/useCustomRefetch";
+import ErrorMsg from "../../error";
 
 const AssignShade = ({ selectedShade, setIsOpen, refetch }) => {
   const {
@@ -20,6 +22,19 @@ const AssignShade = ({ selectedShade, setIsOpen, refetch }) => {
   } = useForm();
 
   const updatedClient = useMemo(() => getTempClient(), []);
+
+  const {
+    loading: loadingEnterprises,
+    data: dataEnterprises,
+    error,
+    refetch: enterpriseRefetch,
+  } = useQuery(GET_ENTERPRISES, {
+    skip: false,
+    client: updatedClient,
+  });
+
+  const { handleRefetch, isRefetching, refetchError } =
+    useCustomRefetch(enterpriseRefetch);
 
   const [assignShed, { loading: loadingSubmit }] = useMutation(ASSIGN_SHED, {
     onCompleted: () => {
@@ -33,16 +48,12 @@ const AssignShade = ({ selectedShade, setIsOpen, refetch }) => {
     client: updatedClient,
   });
 
-  const { loading: loadingEnterprises, data: dataEnterprises } = useQuery(
-    GET_ENTERPRISES,
-    {
-      skip: false,
-      client: updatedClient,
-    }
-  );
-
-  if (loadingEnterprises) {
+  if (loadingEnterprises || isRefetching) {
     return <Loader />;
+  }
+
+  if (error || refetchError) {
+    return <ErrorMsg error={error} message={null} refetch={handleRefetch} />;
   }
 
   const onSubmit = async (data) => {
@@ -54,7 +65,7 @@ const AssignShade = ({ selectedShade, setIsOpen, refetch }) => {
           variables: {
             ...transformObject(data),
             shed_id: selectedShade.id,
-            assigned_by_id:  userId ?? "00000000-0000-0000-0000-000000000000",
+            assigned_by_id: userId ?? "00000000-0000-0000-0000-000000000000",
           },
         });
       } catch (error) {
