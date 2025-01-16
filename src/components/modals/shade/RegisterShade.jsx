@@ -44,11 +44,8 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
     formState: { errors },
   } = useForm(getShadeValues(selectedShade));
 
-
-
   const client = useMemo(() => resetClient(), []);
 
-  
   const updatedClient = useMemo(() => getTempClient(), []);
 
   const [createShed, { loading: loadingSubmit }] = useMutation(INSERT_SHED, {
@@ -376,6 +373,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                 Loading ...
               </span>
             )}
+            {dataZone && dataZone?.base_zone.length === 0 && (
+              <span className="text-gray-400 text-xs px-1">
+                Skip if options are not available
+              </span>
+            )}
           </div>
         )}
 
@@ -433,6 +435,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
                 Loading ...
               </span>
             )}
+            {dataDistrict && dataDistrict?.base_district.length === 0 && (
+              <span className="text-gray-400 text-xs px-1">
+                Skip if options are not available
+              </span>
+            )}
           </div>
         )}
 
@@ -487,6 +494,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             {loadingKebele && (
               <span className="text-gray-400 text-xs capitalize">
                 Loading ...
+              </span>
+            )}
+            {dataKebele && dataKebele?.base_kebele.length === 0 && (
+              <span className="text-gray-400 text-xs px-1">
+                Skip if options are not available
               </span>
             )}
           </div>
@@ -564,12 +576,22 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
           <input
             name="number_of_enterprises"
             type="number"
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
             disabled={isView}
-            placeholder="address"
+            placeholder="Eg. 0"
             id="number_of_enterprises"
             className="w-full p-2 border border-[#CED4DB] mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5]"
             {...register("number_of_enterprises", {
               required: "No. of enterprises is required",
+              valueAsNumber: true,
+              validate: {
+                isPositive: (value) =>
+                  value >= 0 || "Number must be greater than or equal to zero ",
+              },
             })}
           />
           {errors.number_of_enterprises && (
@@ -762,7 +784,7 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             render={({ field }) => (
               <Select
                 {...field}
-                options={ selectData?.base_sectors.map((item) => {
+                options={selectData?.base_sectors.map((item) => {
                   return { value: item.id, label: item.namejson.en };
                 })}
                 isDisabled={isView}
@@ -1080,6 +1102,11 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
             </span>
             <input
               type="number"
+              onKeyDown={(e) => {
+                if (e.key === "-") {
+                  e.preventDefault();
+                }
+              }}
               placeholder="e.g., 50"
               id="construction_status"
               disabled={isView}
@@ -1330,11 +1357,16 @@ const RegisterShade = ({ setIsOpen, refetch, selectedShade, isView }) => {
               valueAsNumber: true,
               validate: {
                 isPositive: (value) =>
-                  value > 0 || "Total cost must be a positive number",
+                  value >= 0 || "Number must be greater than or equal to zero",
               },
             })}
             name="total_cost_of_production"
             type="number"
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
             disabled={isView}
             placeholder="e.g., 100000"
             id="total_cost_of_production"

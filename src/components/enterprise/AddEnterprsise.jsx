@@ -337,6 +337,11 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
           <p className="text-[#CBCBCB] text-sm"> ወጣቶች ወ</p>
           <input
             type="number"
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
             id="young_male"
             disabled={isView}
             placeholder="Enter amount"
@@ -344,7 +349,8 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
               required: "Reason",
 
               validate: {
-                isPositive: (value) => value > 0 || "Must be a positive number",
+                isPositive: (value) =>
+                  value >= 0 || "Number must be greater than or equal to zero ",
               },
             })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
@@ -369,6 +375,11 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
           <p className="text-[#CBCBCB] text-sm"> ወጣቶች ሴ </p>
           <input
             type="number"
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
             id="young_female"
             disabled={isView}
             placeholder="Enter amount"
@@ -376,7 +387,8 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
               required: "Reason",
 
               validate: {
-                isPositive: (value) => value > 0 || "must be a positive number",
+                isPositive: (value) =>
+                  value >= 0 || "Number must be greater than or equal to zero ",
               },
             })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
@@ -401,6 +413,11 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
           <p className="text-[#CBCBCB] text-sm"> የሀገር ውስጥ ተፈናቃይ ወ </p>
           <input
             type="number"
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
             id="internally_displaced_male"
             disabled={isView}
             placeholder="Enter amount"
@@ -408,7 +425,8 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
               required: "Reason",
 
               validate: {
-                isPositive: (value) => value > 0 || "Must be a positive number",
+                isPositive: (value) =>
+                  value >= 0 || "Number must be greater than or equal to zero ",
               },
             })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
@@ -435,6 +453,11 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
           <p className="text-[#CBCBCB] text-sm"> የሀገር ውስጥ ተፈናቃይ ሴ </p>
           <input
             type="number"
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
             id="internally_displaced_female"
             disabled={isView}
             placeholder="Enter amount"
@@ -442,7 +465,8 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
               required: "Reason",
 
               validate: {
-                isPositive: (value) => value > 0 || "Must be a positive number",
+                isPositive: (value) =>
+                  value >= 0 || "Number must be greater than or equal to zero ",
               },
             })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
@@ -469,6 +493,11 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
           <p className="text-[#CBCBCB] text-sm"> አካል ጉዳተኞች ወ </p>
           <input
             type="number"
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
             id="people_with_disabilities_male"
             disabled={isView}
             placeholder="Enter amount"
@@ -476,7 +505,8 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
               required: "Reason",
 
               validate: {
-                isPositive: (value) => value > 0 || "Must be a positive number",
+                isPositive: (value) =>
+                  value >= 0 || "Number must be greater than or equal to zero ",
               },
             })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
@@ -503,6 +533,11 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
           <p className="text-[#CBCBCB] text-sm"> አካል ጉዳተኞች ሴ </p>
           <input
             type="number"
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
             id="people_with_disabilities_female"
             disabled={isView}
             placeholder="Enter amount"
@@ -510,7 +545,8 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
               required: "Reason",
 
               validate: {
-                isPositive: (value) => value > 0 || "Must be a positive number",
+                isPositive: (value) =>
+                  value >= 0 || "Number must be greater than or equal to zero ",
               },
             })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
@@ -537,6 +573,11 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
           <p className="text-[#CBCBCB] text-sm"> ከስደት ተመላሽ ዜጎች ወ </p>
           <input
             type="number"
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
             id="returning_citizens_male"
             disabled={isView}
             placeholder="Enter amount"
@@ -544,7 +585,8 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
               required: "Reason",
 
               validate: {
-                isPositive: (value) => value > 0 || "Must be a positive number",
+                isPositive: (value) =>
+                  value >= 0 || "Number must be greater than or equal to zero ",
               },
             })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
@@ -571,6 +613,11 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
           <p className="text-[#CBCBCB] text-sm"> ከስደት ተመላሽ ዜጎች ሴ </p>
           <input
             type="number"
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
             id="returning_citizens_female"
             disabled={isView}
             placeholder="Enter amount"
@@ -578,7 +625,8 @@ const AddEnterprsise = ({ setIsOpen, refetch, selectedEnterprise, isView }) => {
               required: "Reason",
 
               validate: {
-                isPositive: (value) => value > 0 || "Must be a positive number",
+                isPositive: (value) =>
+                  value >= 0 || "Number must be greater than or equal to zero ",
               },
             })}
             className={`w-full p-2 border mt-2 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3170B5] focus:border-[#3170B5] ${
